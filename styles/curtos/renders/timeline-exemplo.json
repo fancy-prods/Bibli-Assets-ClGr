@@ -1,0 +1,12 @@
+{
+  "fps": 30,
+  "duration": 6,
+  "characters": [
+    {"id": "joao", "params": {"shirt": "#4f8a6b"}, "position": [340, 0], "scale": 1}
+  ],
+  "script": [
+    {"char": "joao", "t": 1.0, "until": 3.5, "pose": "explicando"},
+    {"char": "joao", "t": 2.0, "until": 4.0, "gaze": {"point": [100, 150]}},
+    {"char": "joao", "t": 4.5, "until": 5.5, "lids": {"lid_upper": 1}}
+  ]
+}

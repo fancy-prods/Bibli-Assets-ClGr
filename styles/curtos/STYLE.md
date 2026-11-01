@@ -56,7 +56,7 @@ Cabeça circular, sem nariz, boca ou orelhas. Rosto só com olhos e sobrancelhas
 | Olhos | 0,24 H de diâmetro, 0,07 H abaixo do centro da cabeça, 0,34 H entre os centros |
 | Sobrancelhas | 0,14 H acima do centro da cabeça |
 
-Coordenadas de referência (H = 116, centro em x = 340): ver seção 8 e [`tools/compose_character.py`](tools/compose_character.py), que é a fonte da verdade da geometria.
+Coordenadas de referência (H = 116, centro em x = 340): ver seção 9 e [`tools/compose_character.py`](tools/compose_character.py), que é a fonte da verdade da geometria.
 
 ### Camadas (de trás para frente)
 
@@ -98,7 +98,7 @@ Presets (provisórios): [`presets/expressions.json`](presets/expressions.json).
 ## 5. Contorno
 
 - O personagem tem contorno preto de silhueta; o cenário não tem contorno.
-- O contorno é um filtro aplicado ao grupo, não um traço por peça (ver seção 8). Contornar peça por peça é proibido, porque mostraria a emenda do cotovelo.
+- O contorno é um filtro aplicado ao grupo, não um traço por peça (ver seção 9). Contornar peça por peça é proibido, porque mostraria a emenda do cotovelo.
 - Todo membro que cruza o corpo forma um grupo com filtro próprio: braço, antebraço, objeto segurado e mão.
 - Os olhos mantêm o próprio contorno, mais fino.
 - Objetos segurados ficam atrás da mão.
@@ -116,7 +116,48 @@ Pack separado, preso a âncoras fixas da cabeça:
 - Chapéus trazem uma forma de recorte que esconde o cabelo acima da aba.
 - Óculos ficam sobre os olhos e abaixo das sobrancelhas.
 
-## 7. Pendências (em aberto)
+## 7. Animação ociosa
+
+Por padrão, todo personagem tem movimentos de repouso, como o idle de um jogo. **O idle nunca sobrescreve o roteiro.** Cada parte do personagem é um canal; o roteiro assume só os canais de que precisa, e os demais continuam no idle.
+
+Implementação: [`tools/animate.py`](tools/animate.py) (gera um SVG por frame usando o montador).
+
+| Canal | Idle | Tipo | Quando o roteiro assume |
+|---|---|---|---|
+| `breath` | `b = (1 − cos(2πt/4))/2`; grupo superior (cabelo, braços, tronco, cabeça, olhos, sobrancelhas, franja) sobe `2.5·b` unidades base; ombros abrem `1.5·b` graus. Pernas e sapatos não se movem | Aditivo | Nunca desligado; soma por cima de qualquer pose |
+| `blink` | Fecha e abre em 0,17 s (`sin(π·k)`), a cada 2,5 a 5 s; em 50% das mudanças de olhar do idle, pisca junto | Aditivo | Suprimido proporcionalmente ao peso do roteiro no canal `lids` |
+| `gaze` | Alterna entre o centro (`look_x 0`, `look_y 0.1`) e um desvio (`look_x` ±0,35 a 0,7, `look_y` ±0,25). Fica 0,8 a 2 s no desvio e 3 a 7 s no centro. Aproximação rápida: `cur += (tgt − cur)·min(1, dt·18)` | Substituível | Roteiro define `look_x/look_y` ou um alvo |
+| `lids` | `lid_upper` 0,12 | Substituível | Roteiro define a abertura |
+| `pose` | Preset `neutro` | Substituível | Roteiro define preset ou ângulos |
+
+### Regras de mistura
+
+- Cada canal substituível tem um peso `w` de 0 a 1, que anda linearmente em 0,3 s e é suavizado com `w²(3 − 2w)`. Valor final = `lerp(idle, roteiro, w_suavizado)`. Nunca há salto.
+- Pálpebra final = `max(lerp(0.12, roteiro, w), blink·(1 − w))`.
+- Cada personagem tem uma semente fixa (derivada do `id`). Toda aleatoriedade do idle usa essa semente; a mesma timeline sempre gera os mesmos frames.
+- Alvo de olhar: `{"gaze": {"target": "personagem:maria"}}` ou `{"gaze": {"point": [x, y]}}`. A direção é o vetor normalizado entre o centro da cabeça e o alvo, mapeado para `look_x/look_y` e limitado a ±1.
+- Fora dos intervalos `t`–`until`, o canal volta ao idle com a transição de 0,3 s. Na implementação, a rampa de entrada termina em `t` e a de saída começa em `until`: dentro de `[t, until]` o roteiro vale 100%.
+
+### Timeline de entrada (JSON)
+
+```json
+{
+  "fps": 30,
+  "duration": 6,
+  "characters": [
+    {"id": "joao", "params": {"shirt": "#4f8a6b"}, "position": [340, 0], "scale": 1}
+  ],
+  "script": [
+    {"char": "joao", "t": 1.0, "until": 3.5, "pose": "explicando"},
+    {"char": "joao", "t": 2.0, "until": 4.0, "gaze": {"point": [100, 150]}},
+    {"char": "joao", "t": 4.5, "until": 5.5, "lids": {"lid_upper": 1}}
+  ]
+}
+```
+
+Saída: `python tools/animate.py timeline.json -o renders/frames/` gera um SVG por frame. O formato final de vídeo ainda não foi decidido; por enquanto o pipeline para nos frames SVG.
+
+## 8. Pendências (em aberto)
 
 - [ ] Nome definitivo do estilo
 - [ ] Expressões em planos abertos: emoção nos closes ou olhos e sobrancelhas exagerados
@@ -125,7 +166,7 @@ Pack separado, preso a âncoras fixas da cabeça:
 - [ ] Legendas: fonte, tamanho e destaque da palavra-chave
 - [ ] Tamanho do canvas e ferramenta de montagem
 
-## 8. Geometria de referência
+## 9. Geometria de referência
 
 Coordenadas base com o centro do personagem em x = 340, H = 116 (cabeça com raio 58).
 

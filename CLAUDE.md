@@ -74,4 +74,7 @@ PNG grandes e vídeos não entram no Git. Ficam no Drive, com o link registrado 
 
 - Montador do personagem do estilo curtos:
   `python styles/curtos/tools/compose_character.py params.json -o styles/curtos/renders/nome.svg`
+- Animação (idle + roteiro por canais) do estilo curtos, um SVG por frame:
+  `python styles/curtos/tools/animate.py timeline.json -o styles/curtos/renders/frames/`
+  Não versione sequências completas de frames: mantenha no máximo 1 a cada 15 como amostra.
 - Antes de commitar: todo SVG gerado deve fazer parse com `xml.etree.ElementTree`, todo `catalog.json` deve fazer parse e cada `path` local deve existir.

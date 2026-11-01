@@ -5,7 +5,7 @@ Assets reutilizáveis para vídeos animados gerados com o Claude, organizados po
 - **Regras de uso:** [`CLAUDE.md`](CLAUDE.md)
 - **Compartilhado entre estilos:** [`shared/`](shared/) ([catálogo](shared/catalog.json)): técnica de iluminação.
 - **Estilos:**
-  - [`styles/curtos/`](styles/curtos/) (v1): [guia](styles/curtos/STYLE.md), [catálogo](styles/curtos/catalog.json), montador paramétrico de personagem.
+  - [`styles/curtos/`](styles/curtos/) (v1): [guia](styles/curtos/STYLE.md), [catálogo](styles/curtos/catalog.json), montador paramétrico de personagem e animação ociosa (frames SVG).
   - [`styles/desenho-na-tela/`](styles/desenho-na-tela/): placeholder.
 - **Arquivados:** [`archive/`](archive/)
 

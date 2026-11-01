@@ -120,7 +120,10 @@ def resolve_params(raw: dict) -> dict:
     poses = load_json(os.path.join(PRESETS_DIR, "poses.json"))
     expressions = load_json(os.path.join(PRESETS_DIR, "expressions.json"))
 
-    outfit = raw.get("outfit", {})
+    outfit = dict(raw.get("outfit", {}))
+    for k in ("shirt", "pants", "shoes"):   # atalho: cores de roupa no nível de cima
+        if k in raw:
+            outfit.setdefault(k, raw[k])
     hair = raw.get("hair", {})
     if isinstance(hair, str):
         hair = {"style": hair}
@@ -268,13 +271,13 @@ HELD_OBJECTS = {"caneca": obj_caneca, "celular": obj_celular, "livro": obj_livro
 
 
 # ---------------------------------------------------------------- olhos
-def svg_eye(side: str, iris: str, skin: str, e: dict) -> str:
+def svg_eye(side: str, iris: str, skin: str, e: dict, uid: str = "") -> str:
     cx, cy, r = EYE_CX[side], EYE_CY, EYE_R
     ix = cx + e["look_x"] * LOOK_X_MAX * r
     iy = cy + e["look_y"] * LOOK_Y_MAX * r
     up_edge = cy - r + e["lid_upper"] * 2 * r
     lo_edge = max(cy + r - e["lid_lower"] * 2 * r, up_edge)   # nunca acima da superior
-    cid = f"eye-{side}"
+    cid = f"{uid}eye-{side}"
     x0, x1 = cx - r - 2, cx + r + 2
     parts = [
         f'<g class="eye eye-{side}">',
@@ -351,7 +354,10 @@ def body_parts(p: dict) -> dict:
     }
 
 
-def compose(p: dict) -> str:
+def compose_group(p: dict, uid: str = "", upper_dy: float = 0.0) -> str:
+    """Retorna só as camadas do personagem (sem <svg>/<defs>), para montar cenas
+    com vários personagens. uid prefixa os ids internos (clipPath dos olhos).
+    upper_dy sobe o grupo superior (respiração); pernas e sapatos ficam parados."""
     pose = p["pose"]
     held = p["held"]
     bp = body_parts(p)
@@ -382,24 +388,39 @@ def compose(p: dict) -> str:
     main_back = [a for a in back_arms if 'filter=' not in a]
     own_back = [a for a in back_arms if 'filter=' in a]
 
+    def upper(content: str) -> str:
+        if not content:
+            return ""
+        if not upper_dy:
+            return content
+        return f'<g class="upper" transform="translate(0,{f(-upper_dy)})">{content}</g>'
+
     body = (
         '<g class="character" filter="url(#outline)">'
-        f'<g class="hair-back" color="{hc}" fill="currentColor">{hair_back}</g>'
-        f'{"".join(main_back)}'
-        f'{bp["legs"]}{bp["shoes"]}{bp["torso"]}{bp["head"]}'
-        f'{svg_eye("left", p["iris"], p["skin"], p["eyes"])}'
-        f'{svg_eye("right", p["iris"], p["skin"], p["eyes"])}'
-        f'{svg_brows(p["brow_color"], p["brows"])}'
-        f'<g class="hair-front" color="{hc}" fill="currentColor">{hair_front}</g>'
-        '</g>'
+        + upper(f'<g class="hair-back" color="{hc}" fill="currentColor">{hair_back}</g>'
+                + "".join(main_back))
+        + f'{bp["legs"]}{bp["shoes"]}'
+        + upper(f'{bp["torso"]}{bp["head"]}'
+                f'{svg_eye("left", p["iris"], p["skin"], p["eyes"], uid)}'
+                f'{svg_eye("right", p["iris"], p["skin"], p["eyes"], uid)}'
+                f'{svg_brows(p["brow_color"], p["brows"])}'
+                f'<g class="hair-front" color="{hc}" fill="currentColor">{hair_front}</g>')
+        + '</g>'
     )
     # braço que segura sem cruzar: desenhado antes do corpo, contorno próprio
-    layers = "".join(own_back) + body + "".join(front_groups)
+    return upper("".join(own_back)) + body + upper("".join(front_groups))
+
+
+def svg_document(content: str, width: int = CANVAS_W, height: int = CANVAS_H) -> str:
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CANVAS_W} {CANVAS_H}" '
-        f'width="{CANVAS_W}" height="{CANVAS_H}">'
-        f'<defs>{OUTLINE_FILTER}</defs>{layers}</svg>\n'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
+        f'width="{width}" height="{height}">'
+        f'<defs>{OUTLINE_FILTER}</defs>{content}</svg>\n'
     )
+
+
+def compose(p: dict) -> str:
+    return svg_document(compose_group(p))
 
 
 # ---------------------------------------------------------------- peças
