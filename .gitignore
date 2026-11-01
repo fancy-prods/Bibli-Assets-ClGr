@@ -1,0 +1,18 @@
+# Binários pesados ficam no Drive (link no catalog.json), não no Git.
+*.mp4
+*.mov
+*.webm
+*.avi
+*.mkv
+*.psd
+*.blend
+*.zip
+*.wav
+*.mp3
+# PNG/JPG grandes: commitar só miniaturas pequenas, explicitamente (git add -f).
+*.png
+*.jpg
+*.jpeg
+__pycache__/
+*.pyc
+.DS_Store

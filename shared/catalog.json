@@ -1,0 +1,24 @@
+{
+  "scope": "shared",
+  "version": 1,
+  "assets": [
+    {
+      "id": "shared.iluminacao",
+      "name": "Módulo de iluminação em camadas (SVG)",
+      "style": "shared",
+      "type": "module",
+      "dimension": "2.5d",
+      "tags": ["iluminacao", "luz", "sombra", "profundidade", "vinheta", "lanterna", "blend-mode"],
+      "params": {
+        "darkness": "cor + opacidade, multiply",
+        "pools": "lista de poças: cor, opacidade no centro e no meio do raio, screen",
+        "vignette": "opacidade na borda + início (fração do raio)",
+        "flashlight": "bool; máscara radial na escuridão"
+      },
+      "path": "shared/motion-utils/lighting.svg.md",
+      "used_in": [],
+      "status": "active",
+      "notes": "Técnica agnóstica de estilo; os valores ficam no presets/lighting.json de cada estilo."
+    }
+  ]
+}

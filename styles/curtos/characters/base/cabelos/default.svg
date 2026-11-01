@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "default" do estilo curtos. Duas partes: id="back" (atrás da cabeça) e id="front" (franja, sobre olhos e sobrancelhas).
+       Cor via currentColor: o montador define color= no grupo. Coordenadas base: centro do personagem em x=340, cabeça r=58 em (340,140). -->
+  <g id="back" fill="currentColor">
+    <ellipse cx="340" cy="132" rx="64" ry="60"/>
+  </g>
+  <g id="front" fill="currentColor">
+    <path d="M281 136 Q282 85 340 82 Q398 85 399 136 Q381 109 340 112 Q303 110 281 136 Z"/>
+  </g>
+</svg>

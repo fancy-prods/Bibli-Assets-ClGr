@@ -1,0 +1,31 @@
+{
+  "_doc": "Presets de pose validados (STYLE.md v1). Ângulos em graus no sentido do SVG (positivo = horário). Braço esquerdo (pivô x=279) para fora = positivo; braço direito (pivô x=401) para fora = negativo. crosses_body indica qual braço cruza o corpo e vai para o grupo da frente com filtro próprio.",
+  "neutro": {
+    "right_shoulder": -4, "right_elbow": 0,
+    "left_shoulder": 4, "left_elbow": 0,
+    "crosses_body": []
+  },
+  "explicando": {
+    "right_shoulder": -60, "right_elbow": -90,
+    "left_shoulder": 4, "left_elbow": 0,
+    "crosses_body": []
+  },
+  "acenando": {
+    "right_shoulder": -70, "right_elbow": -100,
+    "left_shoulder": 4, "left_elbow": 0,
+    "crosses_body": []
+  },
+  "pensativo": {
+    "_desc": "mão no queixo; braço direito cruza o corpo",
+    "right_shoulder": 40, "right_elbow": 135,
+    "left_shoulder": 4, "left_elbow": 0,
+    "crosses_body": ["right"]
+  },
+  "segurando_caneca": {
+    "_desc": "braço direito cruza o corpo segurando caneca",
+    "right_shoulder": 10, "right_elbow": 150,
+    "left_shoulder": 4, "left_elbow": 0,
+    "crosses_body": ["right"],
+    "default_held_object": {"type": "caneca", "hand": "right"}
+  }
+}

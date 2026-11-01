@@ -1,0 +1,20 @@
+{
+  "_doc": "Presets de iluminação do estilo curtos (STYLE.md v1). Técnica em /shared/motion-utils/lighting.svg.md. Opacidades no centro do gradiente; poças de luz sempre em mix-blend-mode: screen; a escuridão nunca cobre o personagem nem as fontes de luz.",
+  "dia": {
+    "darkness": {"color": "#2a2240", "opacity": 0.1, "blend": "multiply"},
+    "pools": [
+      {"name": "sol", "color": "#ffe2a6", "center_opacity": 0.5, "mid_opacity": 0.2, "blend": "screen", "temperature": "quente"}
+    ],
+    "vignette": {"color": "#000000", "edge_opacity": 0.25, "start": 0.6},
+    "flashlight": false
+  },
+  "entardecer": {
+    "darkness": {"color": "#2a2240", "opacity": 0.18, "blend": "multiply"},
+    "pools": [
+      {"name": "abajur", "color": "#ffcf8f", "center_opacity": 0.6, "mid_opacity": 0.2, "blend": "screen", "temperature": "quente"},
+      {"name": "janela", "color": "#9dbcf0", "center_opacity": 0.3, "mid_opacity": 0.1, "blend": "screen", "temperature": "fria"}
+    ],
+    "vignette": {"color": "#000000", "edge_opacity": 0.35, "start": 0.6},
+    "flashlight": false
+  }
+}

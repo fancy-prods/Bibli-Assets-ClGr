@@ -1,0 +1,14 @@
+{
+  "_doc": "Presets de expressão (olhos + sobrancelhas). PROVISÓRIO: a lista inicial de situações é pendência do STYLE.md. Pálpebra = energia; sobrancelha = emoção. Olhos: look_x/look_y em -1..1, lid_upper/lid_lower em 0..1. Sobrancelhas: raise em -1..1 (sobe até 8 px = ~0,07 H), tilt em graus (positivo = pontas internas para baixo/raiva; negativo = pontas internas para cima/preocupação).",
+  "_status": "provisorio",
+  "blink": {"duration_ms": 170, "curve": "sine", "interval_s": [2.5, 5.0], "note": "lid_upper vai a 1 e volta; animação, não estado"},
+  "neutro":      {"eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0.12, "lid_lower": 0.0}, "brows": {"raise": 0, "tilt": 0}},
+  "atento":      {"eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0.0, "lid_lower": 0.0}, "brows": {"raise": 0.3, "tilt": 0}},
+  "sonolento":   {"eyes": {"look_x": 0, "look_y": 0.2, "lid_upper": 0.5, "lid_lower": 0.05}, "brows": {"raise": -0.2, "tilt": 0}},
+  "entediado":   {"eyes": {"look_x": 0.4, "look_y": 0, "lid_upper": 0.42, "lid_lower": 0.0}, "brows": {"raise": -0.3, "tilt": 0}},
+  "desconfiado": {"eyes": {"look_x": -0.5, "look_y": 0, "lid_upper": 0.35, "lid_lower": 0.3}, "brows": {"raise": 0, "tilt": 8}},
+  "bravo":       {"eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0.2, "lid_lower": 0.1}, "brows": {"raise": -0.5, "tilt": 20}},
+  "preocupado":  {"eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0.1, "lid_lower": 0.0}, "brows": {"raise": 0.4, "tilt": -15}},
+  "surpreso":    {"eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0.0, "lid_lower": 0.0}, "brows": {"raise": 1.0, "tilt": 0}},
+  "triste":      {"eyes": {"look_x": 0, "look_y": 0.4, "lid_upper": 0.3, "lid_lower": 0.0}, "brows": {"raise": 0.2, "tilt": -18}}
+}

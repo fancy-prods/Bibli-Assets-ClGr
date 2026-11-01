@@ -1,0 +1,114 @@
+{
+  "style": "curtos",
+  "style_version": 1,
+  "assets": [
+    {
+      "id": "curtos.personagem_base",
+      "name": "Personagem base",
+      "style": "curtos",
+      "type": "character",
+      "dimension": "2d",
+      "tags": ["personagem", "base", "silhueta", "camadas"],
+      "params": {
+        "skin": "#hex (default #f1d6c2)",
+        "outfit": {"shirt": "#hex", "pants": "#hex", "shoes": "#hex"},
+        "hair": {"style": "nome em characters/base/cabelos/", "color": "#hex"},
+        "brow_color": "#hex",
+        "iris": "castanho | azul | verde | mel | cinza | #hex",
+        "pose": "preset de presets/poses.json ou ângulos explícitos",
+        "expression": "preset de presets/expressions.json",
+        "eyes": "ver curtos.olhos",
+        "brows": {"raise": "-1..1", "tilt": "graus"},
+        "held_object": {"type": "caneca | celular | livro", "hand": "right | left", "color": "#hex"}
+      },
+      "path": "styles/curtos/tools/compose_character.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/curtos/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/curtos/renders/."
+    },
+    {
+      "id": "curtos.olhos",
+      "name": "Módulo de olhos paramétrico",
+      "style": "curtos",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["olhos", "expressao", "palpebra", "iris", "piscar"],
+      "params": {
+        "look_x": "-1..1 (até 0,47 r)",
+        "look_y": "-1..1 (até 0,45 r)",
+        "lid_upper": "0..1",
+        "lid_lower": "0..1",
+        "iris": "castanho #7a5230 | azul #3f7fc4 | verde #4a9a5c | mel #c08a2e | cinza #8f9aa3"
+      },
+      "path": "styles/curtos/characters/base/olho.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Um asset cobre todas as expressões. Piscar: lid_upper 0→1→0 em ~170 ms (seno), a cada 2,5–5 s. Pálpebra = energia; sobrancelha = emoção."
+    },
+    {
+      "id": "curtos.filtro_contorno",
+      "name": "Filtro de contorno de silhueta",
+      "style": "curtos",
+      "type": "filter",
+      "dimension": "2d",
+      "tags": ["contorno", "outline", "silhueta", "filtro"],
+      "params": {"radius": 3.5, "color": "#111111"},
+      "path": "styles/curtos/characters/base/contorno.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Aplicado a grupos, nunca peça por peça. Membro que cruza o corpo = grupo próprio com o filtro."
+    },
+    {
+      "id": "curtos.presets_pose",
+      "name": "Presets de pose",
+      "style": "curtos",
+      "type": "preset",
+      "dimension": "2d",
+      "tags": ["pose", "braco", "gesto"],
+      "params": {"presets": ["neutro", "explicando", "acenando", "pensativo", "segurando_caneca"]},
+      "path": "styles/curtos/presets/poses.json",
+      "used_in": [],
+      "status": "active",
+      "notes": "Ângulos de ombro e cotovelo validados no STYLE.md v1."
+    },
+    {
+      "id": "curtos.presets_expressao",
+      "name": "Presets de expressão (olhos e sobrancelhas)",
+      "style": "curtos",
+      "type": "preset",
+      "dimension": "2d",
+      "tags": ["expressao", "olhos", "sobrancelhas", "emocao"],
+      "params": {"presets": ["neutro", "atento", "sonolento", "entediado", "desconfiado", "bravo", "preocupado", "surpreso", "triste"]},
+      "path": "styles/curtos/presets/expressions.json",
+      "used_in": [],
+      "status": "active",
+      "notes": "Provisório: a lista inicial de situações é pendência do STYLE.md."
+    },
+    {
+      "id": "curtos.presets_iluminacao",
+      "name": "Presets de iluminação",
+      "style": "curtos",
+      "type": "preset",
+      "dimension": "2.5d",
+      "tags": ["iluminacao", "dia", "entardecer"],
+      "params": {"presets": ["dia", "entardecer"]},
+      "path": "styles/curtos/presets/lighting.json",
+      "used_in": [],
+      "status": "active",
+      "notes": "Valores do estilo para a técnica shared.iluminacao."
+    },
+    {
+      "id": "curtos.hud",
+      "name": "HUD",
+      "style": "curtos",
+      "type": "ui",
+      "dimension": "2d",
+      "tags": ["hud", "interface", "overlay"],
+      "params": {},
+      "path": "styles/curtos/hud/README.md",
+      "used_in": [],
+      "status": "active",
+      "notes": "a implementar"
+    }
+  ]
+}
