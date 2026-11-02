@@ -51,7 +51,12 @@ def cover_color(image):
     if not buckets:
         raise ValueError('Cover has no opaque border pixels; supply --color.')
     total, count = max(buckets.values(), key=lambda pair: pair[1])
-    return tuple(c / count for c in total)
+    # 8-bit image pixels are sRGB; Base Color expects linear (same conversion as --color).
+    return srgb_to_linear(c / count for c in total)
+
+
+def srgb_to_linear(srgb):
+    return tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4 for c in srgb)
 
 
 def build(args):
@@ -63,7 +68,7 @@ def build(args):
         if len(value) != 6:
             raise ValueError('--color must be #RRGGBB')
         srgb = [int(value[i:i+2], 16) / 255 for i in (0, 2, 4)]
-        color = tuple(c / 12.92 if c <= .04045 else ((c + .055) / 1.055) ** 2.4 for c in srgb)
+        color = srgb_to_linear(srgb)
     else:
         color = cover_color(image) if image else (0.025, 0.11, 0.16)
     cover = material('Cover / back / spine color', color)
@@ -127,6 +132,7 @@ def build(args):
         light.data.energy, light.data.size = energy, size
         light.rotation_euler = (-light.location).to_track_quat('-Z', 'Y').to_euler()
     scene.world.color = (.22, .22, .22)
+    scene.view_settings.view_transform = 'Standard'   # AgX (default) washes out cover colors
     args.output.mkdir(parents=True, exist_ok=True)
     scene.render.filepath = str(args.output.resolve() / 'frames' / 'frame_')
     (args.output / 'frames').mkdir(exist_ok=True)

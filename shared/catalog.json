@@ -85,9 +85,47 @@
         "render": "sequência PNG RGBA"
       },
       "path": "shared/models/book/book.py",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Blender 4.3. Gera .blend com textura empacotada; contracapa/lombada seguem cor da capa, três bordas brancas. Ver shared/models/book/README.md."
+    },
+    {
+      "id": "shared.headline_livro",
+      "name": "Headline de abertura de vídeos de livros (capa 3D girando + título), com templates",
+      "style": "shared",
+      "type": "module",
+      "dimension": "2.5d",
+      "tags": [
+        "headline",
+        "intro",
+        "abertura",
+        "livro",
+        "titulo",
+        "template",
+        "marca-texto",
+        "etiquetas",
+        "impacto"
+      ],
+      "params": {
+        "frames_dir": "pasta com o loop RGBA do shared.book_3d (frame_0001.png...)",
+        "title_lines": "lista de linhas do título (até 3)",
+        "label": "rótulo pequeno; padrão 'explicando livros'",
+        "template": "padrao | marca-texto | etiquetas | impacto (TEMPLATES[nome])",
+        "t0": 0.0,
+        "t_out": "2.85 (some até t_out + 0.25)",
+        "end_angle": 28.0,
+        "turns": 2,
+        "spin": 1.15,
+        "book_px": 470
+      },
+      "path": "shared/motion-utils/headline_livro.py",
+      "used_in": [
+        "carlbob1"
+      ],
+      "status": "active",
+      "notes": "Mesmo livro e mesmo tempo em todos os templates; só o texto muda. Larguras de texto medidas com resvg_py (dependências: resvg_py, av, numpy; fontes do Windows). Templates de texto escuro (marca-texto, impacto) precisam de fundo claro ou de uma base por trás. Comparação em fundo branco: ferramentas/video/headline_templates.py (inclui os protótipos não registrados 'editorial' e 'digitando')."
     }
   ]
 }
