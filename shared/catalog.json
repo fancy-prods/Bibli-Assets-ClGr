@@ -57,6 +57,37 @@
       ],
       "status": "active",
       "notes": "Só biblioteca padrão. Exemplo de hook na docstring (zoom 5 -> 0,98 em 1 s com ease_out_expo)."
+    },
+    {
+      "id": "shared.book_3d",
+      "name": "Livro 3D com capa substituível e rotação em loop",
+      "style": "shared",
+      "type": "tool",
+      "dimension": "3d",
+      "tags": [
+        "livro",
+        "book",
+        "capa",
+        "blender",
+        "loop",
+        "transparencia"
+      ],
+      "params": {
+        "cover": "imagem da capa frontal; opcional",
+        "color": "#RRGGBB opcional para contracapa e lombada",
+        "width": 1.5,
+        "height": 2.2,
+        "depth": 0.28,
+        "seconds": 6,
+        "fps": 30,
+        "resolution": 720,
+        "samples": 32,
+        "render": "sequência PNG RGBA"
+      },
+      "path": "shared/models/book/book.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Blender 4.3. Gera .blend com textura empacotada; contracapa/lombada seguem cor da capa, três bordas brancas. Ver shared/models/book/README.md."
     }
   ]
 }
