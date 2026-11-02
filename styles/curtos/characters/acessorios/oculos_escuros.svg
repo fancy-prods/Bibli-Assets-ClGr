@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Óculos escuros do estilo curtos (referência). Fonte da verdade: svg_glasses_escuros() em tools/compose_character.py,
+       ativado com "glasses": {"style": "escuros", "glint": 0..1}. Coordenadas do personagem base (linha dos olhos y 148). -->
+  <g class="glasses"><path d="M302 140 L284 134" stroke="#141414" stroke-width="5" stroke-linecap="round"/><path d="M378 140 L396 134" stroke="#141414" stroke-width="5" stroke-linecap="round"/><rect x="336" y="137" width="8" height="5" rx="2" fill="#141414"/><rect x="301.5" y="134" width="37" height="31" rx="11" fill="#141414"/><rect x="341.5" y="134" width="37" height="31" rx="11" fill="#141414"/><path d="M306 137 l10 0 l-8 14 l-6 0 Z" fill="#ffffff" opacity="0.18"/><path d="M346 137 l10 0 l-8 14 l-6 0 Z" fill="#ffffff" opacity="0.18"/></g>
+</svg>

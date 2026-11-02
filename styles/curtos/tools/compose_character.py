@@ -22,8 +22,15 @@ Formato do JSON (todas as chaves são opcionais):
   "eyes": {"look_x": 0, "look_y": 0, "lid_upper": 0, "lid_lower": 0},
   "brows": {"raise": 0, "tilt": 0},
   "held_object": {"type": "caneca" | "celular" | "livro",
-                  "hand": "right" | "left", "color": "#ffffff"} | null
+                  "hand": "right" | "left", "color": "#ffffff"} | null,
+  "npc": 0,                            # figurante: preset de presets/npc.json (índice)
+  "glasses": {"style": "escuros", "glint": 0.0..1.0 | null} | null
 }
+
+"npc": i preenche pele, roupa, cabelo (careca), sobrancelha e íris com o
+tom de cinza i do preset; chaves explícitas sobrescrevem. "glasses.glint" é a
+posição do reflexo que atravessa as lentes (0 = entrando, 1 = saindo); anime
+de 0 a 1 em ~0,45 s.
 
 Precedência: valores explícitos em "eyes"/"brows" sobrescrevem o preset de
 "expression". Se "held_object" não for informado e a pose tiver
@@ -116,9 +123,29 @@ def load_json(path: str) -> dict:
 
 
 # ---------------------------------------------------------------- params
+def darken(hexc: str, k: float) -> str:
+    r, g, b = (int(hexc[i:i + 2], 16) for i in (1, 3, 5))
+    return "#%02x%02x%02x" % (int(r * k), int(g * k), int(b * k))
+
+
+def npc_defaults(i: int) -> dict:
+    """Parâmetros do figurante cinza i (presets/npc.json, cíclico)."""
+    n = load_json(os.path.join(PRESETS_DIR, "npc.json"))
+    g = n["grays"][i % len(n["grays"])]
+    return {"skin": g,
+            "outfit": {"shirt": g, "pants": darken(g, n["pants_darken"]), "shoes": darken(g, n["shoes_darken"])},
+            "hair": {"style": n["hair_style"], "color": g},
+            "brow_color": g,
+            "iris": n["iris"][i % len(n["iris"])]}
+
+
 def resolve_params(raw: dict) -> dict:
     poses = load_json(os.path.join(PRESETS_DIR, "poses.json"))
     expressions = load_json(os.path.join(PRESETS_DIR, "expressions.json"))
+    if raw.get("npc") is not None:
+        base = npc_defaults(int(raw["npc"]))
+        base.update({k: v for k, v in raw.items() if k != "npc"})
+        raw = base
 
     outfit = dict(raw.get("outfit", {}))
     for k in ("shirt", "pants", "shoes"):   # atalho: cores de roupa no nível de cima
@@ -187,6 +214,16 @@ def resolve_params(raw: dict) -> dict:
         if held.get("type") not in HELD_OBJECTS:
             raise SystemExit(f"objeto desconhecido: {held.get('type')!r} (use {list(HELD_OBJECTS)})")
     p["held"] = held
+
+    glasses = raw.get("glasses")
+    if isinstance(glasses, str):
+        glasses = {"style": glasses}
+    if glasses is not None:
+        glasses = dict(glasses)
+        glasses.setdefault("style", "escuros")
+        if glasses["style"] not in GLASSES:
+            raise SystemExit(f"óculos desconhecido: {glasses['style']!r} (use {list(GLASSES)})")
+    p["glasses"] = glasses
     return p
 
 
@@ -319,6 +356,36 @@ def svg_brows(color: str, b: dict) -> str:
     return "".join(out)
 
 
+# ---------------------------------------------------------------- acessórios
+LENS = {"left": 301.5, "right": 341.5}            # x das lentes; y 134, 37 x 31
+LENS_Y, LENS_W, LENS_H, LENS_RX = 134, 37, 31, 11
+
+
+def svg_glasses_escuros(g: dict, uid: str = "") -> str:
+    """Óculos escuros na linha dos olhos; lentes cobrem o olho inteiro."""
+    lenses = "".join(f'<rect x="{x}" y="{LENS_Y}" width="{LENS_W}" height="{LENS_H}" rx="{LENS_RX}" fill="#141414"/>'
+                     for x in LENS.values())
+    out = ['<g class="glasses">',
+           '<path d="M302 140 L284 134" stroke="#141414" stroke-width="5" stroke-linecap="round"/>',
+           '<path d="M378 140 L396 134" stroke="#141414" stroke-width="5" stroke-linecap="round"/>',
+           '<rect x="336" y="137" width="8" height="5" rx="2" fill="#141414"/>',
+           lenses,
+           '<path d="M306 137 l10 0 l-8 14 l-6 0 Z" fill="#ffffff" opacity="0.18"/>',
+           '<path d="M346 137 l10 0 l-8 14 l-6 0 Z" fill="#ffffff" opacity="0.18"/>']
+    u = g.get("glint")
+    if u is not None and 0 <= u <= 1:
+        gx = 280 + 120 * u * u * (3 - 2 * u)
+        out.append(f'<clipPath id="{uid}lens">'
+                   + lenses.replace(' fill="#141414"', "") + '</clipPath>'
+                   f'<path d="M{f(gx)} 128 l14 0 l-22 40 l-14 0 Z" fill="#ffffff" opacity="0.75" '
+                   f'clip-path="url(#{uid}lens)"/>')
+    out.append("</g>")
+    return "".join(out)
+
+
+GLASSES = {"escuros": svg_glasses_escuros}
+
+
 # ---------------------------------------------------------------- cabelo
 def load_hair(style: str) -> tuple[str, str]:
     path = os.path.join(HAIR_DIR, f"{style}.svg")
@@ -404,7 +471,8 @@ def compose_group(p: dict, uid: str = "", upper_dy: float = 0.0) -> str:
                 f'{svg_eye("left", p["iris"], p["skin"], p["eyes"], uid)}'
                 f'{svg_eye("right", p["iris"], p["skin"], p["eyes"], uid)}'
                 f'{svg_brows(p["brow_color"], p["brows"])}'
-                f'<g class="hair-front" color="{hc}" fill="currentColor">{hair_front}</g>')
+                f'<g class="hair-front" color="{hc}" fill="currentColor">{hair_front}</g>'
+                + (GLASSES[p["glasses"]["style"]](p["glasses"], uid) if p["glasses"] else ""))
         + '</g>'
     )
     # braço que segura sem cruzar: desenhado antes do corpo, contorno próprio

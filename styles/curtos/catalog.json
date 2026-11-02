@@ -38,10 +38,17 @@
           "type": "caneca | celular | livro",
           "hand": "right | left",
           "color": "#hex"
+        },
+        "npc": "int: figurante cinza (ver curtos.preset_npc)",
+        "glasses": {
+          "style": "escuros",
+          "glint": "0..1 | null"
         }
       },
       "path": "styles/curtos/tools/compose_character.py",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/curtos/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/curtos/renders/."
     },
@@ -66,7 +73,9 @@
         "iris": "castanho #7a5230 | azul #3f7fc4 | verde #4a9a5c | mel #c08a2e | cinza #8f9aa3"
       },
       "path": "styles/curtos/characters/base/olho.svg",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Um asset cobre todas as expressões. Piscar: lid_upper 0→1→0 em ~170 ms (seno), a cada 2,5–5 s. Pálpebra = energia; sobrancelha = emoção."
     },
@@ -112,7 +121,9 @@
         ]
       },
       "path": "styles/curtos/presets/poses.json",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Ângulos de ombro e cotovelo validados no STYLE.md v1."
     },
@@ -142,7 +153,9 @@
         ]
       },
       "path": "styles/curtos/presets/expressions.json",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Provisório: a lista inicial de situações é pendência do STYLE.md."
     },
@@ -198,7 +211,9 @@
         }
       },
       "path": "styles/curtos/tools/animate.py",
-      "used_in": [],
+      "used_in": [
+        "carlbob1"
+      ],
       "status": "active",
       "notes": "Gera um SVG por frame via compose_character.py. Semente fixa por id de personagem. Exemplo: styles/curtos/renders/timeline-exemplo.json (frames em renders/frames/, só 1 a cada 15 versionado). Formato final de vídeo ainda não decidido."
     },
@@ -218,6 +233,84 @@
       "used_in": [],
       "status": "active",
       "notes": "a implementar"
+    },
+    {
+      "id": "curtos.preset_npc",
+      "name": "Preset de figurante (NPC cinza)",
+      "style": "curtos",
+      "type": "preset",
+      "dimension": "2d",
+      "tags": [
+        "npc",
+        "figurante",
+        "multidao",
+        "cliente",
+        "cinza"
+      ],
+      "params": {
+        "npc": "int (cíclico): escolhe o tom de cinza e a íris",
+        "grays": "8 tons #808080..#bdbdbd",
+        "pants_darken": 0.82,
+        "shoes_darken": 0.55
+      },
+      "path": "styles/curtos/presets/npc.json",
+      "used_in": [
+        "carlbob1"
+      ],
+      "status": "active",
+      "notes": "Recorrente: cabeça e corpo inteiro cinza, olhos normais, sem cabelo (cabelos/careca.svg). Uso: {\"npc\": i} nos params do montador; chaves explícitas sobrescrevem. Personagem com nome (ex.: Ricardo) ganha design próprio."
+    },
+    {
+      "id": "curtos.oculos_escuros",
+      "name": "Óculos escuros",
+      "style": "curtos",
+      "type": "component",
+      "dimension": "2d",
+      "tags": [
+        "acessorio",
+        "oculos",
+        "estilo",
+        "confiante",
+        "reflexo"
+      ],
+      "params": {
+        "glasses": {
+          "style": "escuros",
+          "glint": "0..1 (reflexo atravessando as lentes) | null"
+        }
+      },
+      "path": "styles/curtos/characters/acessorios/oculos_escuros.svg",
+      "used_in": [
+        "carlbob1"
+      ],
+      "status": "active",
+      "notes": "Desenhado pelo compose_character.py (svg_glasses_escuros) dentro do grupo da cabeça, então acompanha a respiração e ganha contorno. O SVG é referência. Anime glint de 0 a 1 em ~0,45 s."
+    },
+    {
+      "id": "curtos.cenario_loja_eletronicos",
+      "name": "Cenário: loja de eletrônicos",
+      "style": "curtos",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "loja",
+        "eletronicos",
+        "varejo",
+        "vendedor",
+        "trabalho"
+      ],
+      "params": {
+        "canvas": "1080x1920, mundo de x -2000 a 3000",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25"
+      },
+      "path": "styles/curtos/scenes/loja_eletronicos.svg",
+      "used_in": [
+        "carlbob1"
+      ],
+      "status": "active",
+      "notes": "TVs, fones, caixas de celular e letreiro ELETRÔNICOS (Arial 900). Âncoras no comentário do arquivo."
     }
   ]
 }

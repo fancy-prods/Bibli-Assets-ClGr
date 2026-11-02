@@ -1,0 +1,8 @@
+{
+  "_doc": "Figurantes (NPC) do estilo curtos: cabeça e corpo cinza, olhos normais, sem cabelo. Use {\"npc\": i} nos params do montador; i escolhe o tom de cinza e a íris (cíclico). Chaves explícitas nos params sobrescrevem o preset.",
+  "grays": ["#9b9b9b", "#a9a9a9", "#8d8d8d", "#b6b6b6", "#808080", "#a2a2a2", "#939393", "#bdbdbd"],
+  "iris": ["castanho", "azul", "verde", "mel", "castanho", "cinza", "azul", "castanho"],
+  "pants_darken": 0.82,
+  "shoes_darken": 0.55,
+  "hair_style": "careca"
+}

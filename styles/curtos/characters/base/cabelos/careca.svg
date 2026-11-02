@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "careca" do estilo curtos: sem cabelo. Usado pelos NPCs (cabeça e corpo cinza).
+       Mantém as duas partes vazias (id="back" e id="front") para o montador funcionar igual aos outros cabelos. -->
+  <g id="back" fill="currentColor"/>
+  <g id="front" fill="currentColor"/>
+</svg>
