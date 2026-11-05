@@ -56,7 +56,7 @@ Cabeça circular, sem nariz, boca ou orelhas. Rosto só com olhos e sobrancelhas
 | Olhos | 0,24 H de diâmetro, 0,07 H abaixo do centro da cabeça, 0,34 H entre os centros |
 | Sobrancelhas | 0,14 H acima do centro da cabeça |
 
-Coordenadas de referência (H = 116, centro em x = 340): ver seção 9 e [`tools/compose_character.py`](tools/compose_character.py), que é a fonte da verdade da geometria.
+Coordenadas de referência (H = 116, centro em x = 340): ver seção 10 e [`tools/compose_character.py`](tools/compose_character.py), que é a fonte da verdade da geometria.
 
 ### Camadas (de trás para frente)
 
@@ -98,7 +98,7 @@ Presets (provisórios): [`presets/expressions.json`](presets/expressions.json).
 ## 5. Contorno
 
 - O personagem tem contorno preto de silhueta; o cenário não tem contorno.
-- O contorno é um filtro aplicado ao grupo, não um traço por peça (ver seção 9). Contornar peça por peça é proibido, porque mostraria a emenda do cotovelo.
+- O contorno é um filtro aplicado ao grupo, não um traço por peça (ver seção 10). Contornar peça por peça é proibido, porque mostraria a emenda do cotovelo.
 - Todo membro que cruza o corpo forma um grupo com filtro próprio: braço, antebraço, objeto segurado e mão.
 - Os olhos mantêm o próprio contorno, mais fino.
 - Objetos segurados ficam atrás da mão.
@@ -157,16 +157,31 @@ Implementação: [`tools/animate.py`](tools/animate.py) (gera um SVG por frame u
 
 Saída: `python tools/animate.py timeline.json -o renders/frames/` gera um SVG por frame. O formato final de vídeo ainda não foi decidido; por enquanto o pipeline para nos frames SVG.
 
-## 8. Pendências (em aberto)
+## 8. Formatos (16:9 e 9:16)
+
+> Decidido em 04/11/2026. Vale para vídeos curtos (9:16) e longos (16:9).
+
+Os cenários são feitos uma vez e servem aos dois formatos. **Não renderizar em 16:9 e recortar para 9:16**: o recorte de 1920×1080 tem só 608×1080 px (ampliar 1,8× borra) e quebra a composição.
+
+- **Coordenadas de mundo comuns:** altura de 1920 unidades (y 0 a 1920), igual ao cenário `loja_eletronicos`.
+- **Cenário largo para o 16:9:** desenhado pelo menos de x −1167 a 2247 (3414 unidades, a largura de um quadro 16:9 com 1920 de altura, centrado em x 540). Desenhar mais largo se a câmera for se mover.
+- **Zona segura do 9:16:** x 0 a 1080. O que identifica o lugar (letreiro, porta, móvel principal) fica dentro dela; as laterais completam o 16:9 e não podem ficar vazias.
+- **Câmera por formato:** cada formato tem o próprio enquadramento (`viewBox`) sobre o mesmo cenário. O 9:16 usa uma janela de 1080×1920; o 16:9 usa uma janela de proporção 16:9 (de 3414×1920 no plano aberto até janelas menores nos closes). Por ser vetorial, cada formato renderiza direto na resolução final (1080×1920 ou 1920×1080).
+- **Personagens, textos e interface posicionados por formato:** no 16:9 ficam lado a lado; no 9:16, mais próximos ou empilhados. Headline, legendas e bloco de notas têm layout próprio em cada formato.
+- Âncoras do cenário (piso, prateleiras, letreiro) valem para os dois formatos; registrar no comentário do SVG também os limites desenhados em x e a zona segura.
+
+Pendente: `loja_eletronicos` foi desenhado para 1080×1920; conferir se as laterais estão preenchidas antes de usá-lo no 16:9.
+
+## 9. Pendências (em aberto)
 
 - [x] Nome definitivo do estilo: "palco" (luz de cena no personagem, situações encenadas, NPCs cinza como coro; vale para vídeos curtos e longos)
 - [ ] Expressões em planos abertos: emoção nos closes ou olhos e sobrancelhas exagerados
 - [ ] Como sinalizar quem está falando, já que não há boca
 - [ ] Lista inicial de situações dos presets de olhos e sobrancelhas
 - [ ] Legendas: fonte, tamanho e destaque da palavra-chave
-- [ ] Tamanho do canvas e ferramenta de montagem
+- [ ] Ferramenta de montagem (tamanho do canvas decidido na seção 8)
 
-## 9. Geometria de referência
+## 10. Geometria de referência
 
 Coordenadas base com o centro do personagem em x = 340, H = 116 (cabeça com raio 58).
 
