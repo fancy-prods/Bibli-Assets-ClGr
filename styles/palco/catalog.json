@@ -1,11 +1,11 @@
 {
-  "style": "curtos",
+  "style": "palco",
   "style_version": 1,
   "assets": [
     {
-      "id": "curtos.personagem_base",
+      "id": "palco.personagem_base",
       "name": "Personagem base",
-      "style": "curtos",
+      "style": "palco",
       "type": "character",
       "dimension": "2d",
       "tags": [
@@ -29,7 +29,7 @@
         "iris": "castanho | azul | verde | mel | cinza | #hex",
         "pose": "preset de presets/poses.json ou ângulos explícitos",
         "expression": "preset de presets/expressions.json",
-        "eyes": "ver curtos.olhos",
+        "eyes": "ver palco.olhos",
         "brows": {
           "raise": "-1..1",
           "tilt": "graus"
@@ -39,23 +39,23 @@
           "hand": "right | left",
           "color": "#hex"
         },
-        "npc": "int: figurante cinza (ver curtos.preset_npc)",
+        "npc": "int: figurante cinza (ver palco.preset_npc)",
         "glasses": {
           "style": "escuros",
           "glint": "0..1 | null"
         }
       },
-      "path": "styles/curtos/tools/compose_character.py",
+      "path": "styles/palco/tools/compose_character.py",
       "used_in": [
         "carlbob1"
       ],
       "status": "active",
-      "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/curtos/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/curtos/renders/."
+      "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/palco/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/palco/renders/."
     },
     {
-      "id": "curtos.olhos",
+      "id": "palco.olhos",
       "name": "Módulo de olhos paramétrico",
-      "style": "curtos",
+      "style": "palco",
       "type": "component",
       "dimension": "2d",
       "tags": [
@@ -72,7 +72,7 @@
         "lid_lower": "0..1",
         "iris": "castanho #7a5230 | azul #3f7fc4 | verde #4a9a5c | mel #c08a2e | cinza #8f9aa3"
       },
-      "path": "styles/curtos/characters/base/olho.svg",
+      "path": "styles/palco/characters/base/olho.svg",
       "used_in": [
         "carlbob1"
       ],
@@ -80,9 +80,9 @@
       "notes": "Um asset cobre todas as expressões. Piscar: lid_upper 0→1→0 em ~170 ms (seno), a cada 2,5–5 s. Pálpebra = energia; sobrancelha = emoção."
     },
     {
-      "id": "curtos.filtro_contorno",
+      "id": "palco.filtro_contorno",
       "name": "Filtro de contorno de silhueta",
-      "style": "curtos",
+      "style": "palco",
       "type": "filter",
       "dimension": "2d",
       "tags": [
@@ -95,15 +95,15 @@
         "radius": 3.5,
         "color": "#111111"
       },
-      "path": "styles/curtos/characters/base/contorno.svg",
+      "path": "styles/palco/characters/base/contorno.svg",
       "used_in": [],
       "status": "active",
       "notes": "Aplicado a grupos, nunca peça por peça. Membro que cruza o corpo = grupo próprio com o filtro."
     },
     {
-      "id": "curtos.presets_pose",
+      "id": "palco.presets_pose",
       "name": "Presets de pose",
-      "style": "curtos",
+      "style": "palco",
       "type": "preset",
       "dimension": "2d",
       "tags": [
@@ -120,7 +120,7 @@
           "segurando_caneca"
         ]
       },
-      "path": "styles/curtos/presets/poses.json",
+      "path": "styles/palco/presets/poses.json",
       "used_in": [
         "carlbob1"
       ],
@@ -128,9 +128,9 @@
       "notes": "Ângulos de ombro e cotovelo validados no STYLE.md v1."
     },
     {
-      "id": "curtos.presets_expressao",
+      "id": "palco.presets_expressao",
       "name": "Presets de expressão (olhos e sobrancelhas)",
-      "style": "curtos",
+      "style": "palco",
       "type": "preset",
       "dimension": "2d",
       "tags": [
@@ -152,7 +152,7 @@
           "triste"
         ]
       },
-      "path": "styles/curtos/presets/expressions.json",
+      "path": "styles/palco/presets/expressions.json",
       "used_in": [
         "carlbob1"
       ],
@@ -160,9 +160,9 @@
       "notes": "Provisório: a lista inicial de situações é pendência do STYLE.md."
     },
     {
-      "id": "curtos.presets_iluminacao",
+      "id": "palco.presets_iluminacao",
       "name": "Presets de iluminação",
-      "style": "curtos",
+      "style": "palco",
       "type": "preset",
       "dimension": "2.5d",
       "tags": [
@@ -176,15 +176,15 @@
           "entardecer"
         ]
       },
-      "path": "styles/curtos/presets/lighting.json",
+      "path": "styles/palco/presets/lighting.json",
       "used_in": [],
       "status": "active",
       "notes": "Valores do estilo para a técnica shared.iluminacao."
     },
     {
-      "id": "curtos.animacao_ociosa",
+      "id": "palco.animacao_ociosa",
       "name": "Sistema de animação ociosa (idle + roteiro por canais)",
-      "style": "curtos",
+      "style": "palco",
       "type": "tool",
       "dimension": "2d",
       "tags": [
@@ -210,17 +210,17 @@
           "pose": "substituível"
         }
       },
-      "path": "styles/curtos/tools/animate.py",
+      "path": "styles/palco/tools/animate.py",
       "used_in": [
         "carlbob1"
       ],
       "status": "active",
-      "notes": "Gera um SVG por frame via compose_character.py. Semente fixa por id de personagem. Exemplo: styles/curtos/renders/timeline-exemplo.json (frames em renders/frames/, só 1 a cada 15 versionado). Formato final de vídeo ainda não decidido."
+      "notes": "Gera um SVG por frame via compose_character.py. Semente fixa por id de personagem. Exemplo: styles/palco/renders/timeline-exemplo.json (frames em renders/frames/, só 1 a cada 15 versionado). Formato final de vídeo ainda não decidido."
     },
     {
-      "id": "curtos.hud",
+      "id": "palco.hud",
       "name": "HUD",
-      "style": "curtos",
+      "style": "palco",
       "type": "ui",
       "dimension": "2d",
       "tags": [
@@ -229,15 +229,15 @@
         "overlay"
       ],
       "params": {},
-      "path": "styles/curtos/hud/README.md",
+      "path": "styles/palco/hud/README.md",
       "used_in": [],
       "status": "active",
       "notes": "a implementar"
     },
     {
-      "id": "curtos.preset_npc",
+      "id": "palco.preset_npc",
       "name": "Preset de figurante (NPC cinza)",
-      "style": "curtos",
+      "style": "palco",
       "type": "preset",
       "dimension": "2d",
       "tags": [
@@ -253,7 +253,7 @@
         "pants_darken": 0.82,
         "shoes_darken": 0.55
       },
-      "path": "styles/curtos/presets/npc.json",
+      "path": "styles/palco/presets/npc.json",
       "used_in": [
         "carlbob1"
       ],
@@ -261,9 +261,9 @@
       "notes": "Recorrente: cabeça e corpo inteiro cinza, olhos normais, sem cabelo (cabelos/careca.svg). Uso: {\"npc\": i} nos params do montador; chaves explícitas sobrescrevem. Personagem com nome (ex.: Ricardo) ganha design próprio."
     },
     {
-      "id": "curtos.oculos_escuros",
+      "id": "palco.oculos_escuros",
       "name": "Óculos escuros",
-      "style": "curtos",
+      "style": "palco",
       "type": "component",
       "dimension": "2d",
       "tags": [
@@ -279,7 +279,7 @@
           "glint": "0..1 (reflexo atravessando as lentes) | null"
         }
       },
-      "path": "styles/curtos/characters/acessorios/oculos_escuros.svg",
+      "path": "styles/palco/characters/acessorios/oculos_escuros.svg",
       "used_in": [
         "carlbob1"
       ],
@@ -287,9 +287,9 @@
       "notes": "Desenhado pelo compose_character.py (svg_glasses_escuros) dentro do grupo da cabeça, então acompanha a respiração e ganha contorno. O SVG é referência. Anime glint de 0 a 1 em ~0,45 s."
     },
     {
-      "id": "curtos.cenario_loja_eletronicos",
+      "id": "palco.cenario_loja_eletronicos",
       "name": "Cenário: loja de eletrônicos",
-      "style": "curtos",
+      "style": "palco",
       "type": "scene",
       "dimension": "2d",
       "tags": [
@@ -305,7 +305,7 @@
         "piso_y": 1257,
         "personagens": "pés y 1600, escala 1.25"
       },
-      "path": "styles/curtos/scenes/loja_eletronicos.svg",
+      "path": "styles/palco/scenes/loja_eletronicos.svg",
       "used_in": [
         "carlbob1"
       ],

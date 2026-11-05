@@ -5,12 +5,12 @@ Assets reutilizáveis para vídeos animados gerados com o Claude, organizados po
 - **Regras de uso:** [`CLAUDE.md`](CLAUDE.md)
 - **Compartilhado entre estilos:** [`shared/`](shared/) ([catálogo](shared/catalog.json)): técnica de iluminação.
 - **Estilos:**
-  - [`styles/curtos/`](styles/curtos/) (v1): [guia](styles/curtos/STYLE.md), [catálogo](styles/curtos/catalog.json), montador paramétrico de personagem e animação ociosa (frames SVG).
+  - [`styles/palco/`](styles/palco/) (v1): [guia](styles/palco/STYLE.md), [catálogo](styles/palco/catalog.json), montador paramétrico de personagem e animação ociosa (frames SVG).
   - [`styles/desenho-na-tela/`](styles/desenho-na-tela/): placeholder.
 - **Arquivados:** [`archive/`](archive/)
 
 Gerar um personagem:
 
 ```bash
-python styles/curtos/tools/compose_character.py styles/curtos/params/neutro.json -o styles/curtos/renders/neutro.svg
+python styles/palco/tools/compose_character.py styles/palco/params/neutro.json -o styles/palco/renders/neutro.svg
 ```

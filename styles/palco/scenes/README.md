@@ -1,4 +1,4 @@
-# Cenários (estilo curtos)
+# Cenários (estilo palco)
 
 | Cenário | Arquivo | Primeiro uso |
 |---|---|---|

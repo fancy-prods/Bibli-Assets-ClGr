@@ -6,7 +6,7 @@ Este repositório é a biblioteca de assets reutilizáveis para vídeos animados
 
 - Cada estilo tem pasta própria em `/styles/<estilo>/`, com `STYLE.md` e `catalog.json` próprios.
 - Em cada vídeo, consulte **apenas** o catálogo do estilo do vídeo atual, mais `/shared/catalog.json`.
-- Estilos atuais: `curtos` (v1 ativo) e `desenho-na-tela` (placeholder, guia ainda não escrito).
+- Estilos atuais: `palco` (v1 ativo) e `desenho-na-tela` (placeholder, guia ainda não escrito).
 
 ## 2. Assets não migram entre estilos; são redesenhados
 
@@ -42,14 +42,14 @@ PNG grandes e vídeos não entram no Git. Ficam no Drive, com o link registrado 
 
 ```json
 {
-  "id": "curtos.olhos",
+  "id": "palco.olhos",
   "name": "Módulo de olhos paramétrico",
-  "style": "curtos",
+  "style": "palco",
   "type": "component",
   "dimension": "2d",
   "tags": ["olhos", "expressao"],
   "params": {"look_x": "-1..1"},
-  "path": "styles/curtos/characters/base/olho.svg",
+  "path": "styles/palco/characters/base/olho.svg",
   "used_in": [],
   "status": "active",
   "notes": ""
@@ -72,9 +72,9 @@ PNG grandes e vídeos não entram no Git. Ficam no Drive, com o link registrado 
 
 ## 8. Ferramentas
 
-- Montador do personagem do estilo curtos:
-  `python styles/curtos/tools/compose_character.py params.json -o styles/curtos/renders/nome.svg`
-- Animação (idle + roteiro por canais) do estilo curtos, um SVG por frame:
-  `python styles/curtos/tools/animate.py timeline.json -o styles/curtos/renders/frames/`
+- Montador do personagem do estilo palco:
+  `python styles/palco/tools/compose_character.py params.json -o styles/palco/renders/nome.svg`
+- Animação (idle + roteiro por canais) do estilo palco, um SVG por frame:
+  `python styles/palco/tools/animate.py timeline.json -o styles/palco/renders/frames/`
   Não versione sequências completas de frames: mantenha no máximo 1 a cada 15 como amostra.
 - Antes de commitar: todo SVG gerado deve fazer parse com `xml.etree.ElementTree`, todo `catalog.json` deve fazer parse e cada `path` local deve existir.

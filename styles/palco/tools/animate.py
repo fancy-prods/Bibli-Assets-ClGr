@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Animação ociosa (idle) + roteiro do estilo "curtos". Gera um SVG por frame.
+"""Animação ociosa (idle) + roteiro do estilo "palco". Gera um SVG por frame.
 
 Só biblioteca padrão. Usa o montador (compose_character.py) para cada frame.
 

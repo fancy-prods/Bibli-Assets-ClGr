@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Montador paramétrico do personagem base do estilo "curtos" (v1).
+"""Montador paramétrico do personagem base do estilo "palco" (v1).
 
 Só biblioteca padrão. Lê um JSON de parâmetros e escreve um SVG standalone
 com fundo transparente.

@@ -1,5 +1,5 @@
 {
-  "_doc": "Presets de iluminação do estilo curtos (STYLE.md v1). Técnica em /shared/motion-utils/lighting.svg.md. Opacidades no centro do gradiente; poças de luz sempre em mix-blend-mode: screen; a escuridão nunca cobre o personagem nem as fontes de luz.",
+  "_doc": "Presets de iluminação do estilo palco (STYLE.md v1). Técnica em /shared/motion-utils/lighting.svg.md. Opacidades no centro do gradiente; poças de luz sempre em mix-blend-mode: screen; a escuridão nunca cobre o personagem nem as fontes de luz.",
   "dia": {
     "darkness": {"color": "#2a2240", "opacity": 0.1, "blend": "multiply"},
     "pools": [

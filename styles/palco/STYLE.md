@@ -1,6 +1,6 @@
-# Estilo "curtos": guia v1
+# Estilo "palco": guia v1
 
-> Versão 1, aprovada em 31/10/2026. "curtos" é nome provisório (ver Pendências).
+> Versão 1, aprovada em 31/10/2026. Nome definitivo "palco" escolhido em 04/11/2026 (antes: "curtos", provisório).
 > Catálogo do estilo: [`catalog.json`](catalog.json). Técnica de iluminação compartilhada: [`/shared/motion-utils/lighting.svg.md`](../../shared/motion-utils/lighting.svg.md).
 
 ## 1. Princípio
@@ -159,7 +159,7 @@ Saída: `python tools/animate.py timeline.json -o renders/frames/` gera um SVG p
 
 ## 8. Pendências (em aberto)
 
-- [ ] Nome definitivo do estilo
+- [x] Nome definitivo do estilo: "palco" (luz de cena no personagem, situações encenadas, NPCs cinza como coro; vale para vídeos curtos e longos)
 - [ ] Expressões em planos abertos: emoção nos closes ou olhos e sobrancelhas exagerados
 - [ ] Como sinalizar quem está falando, já que não há boca
 - [ ] Lista inicial de situações dos presets de olhos e sobrancelhas

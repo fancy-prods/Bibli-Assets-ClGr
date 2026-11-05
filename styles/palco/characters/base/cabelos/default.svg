@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
-  <!-- Cabelo "default" do estilo curtos. Duas partes: id="back" (atrás da cabeça) e id="front" (franja, sobre olhos e sobrancelhas).
+  <!-- Cabelo "default" do estilo palco. Duas partes: id="back" (atrás da cabeça) e id="front" (franja, sobre olhos e sobrancelhas).
        Cor via currentColor: o montador define color= no grupo. Coordenadas base: centro do personagem em x=340, cabeça r=58 em (340,140). -->
   <g id="back" fill="currentColor">
     <ellipse cx="340" cy="132" rx="64" ry="60"/>
