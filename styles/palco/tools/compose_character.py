@@ -81,6 +81,7 @@ UPPER_ARM_LEN = 85                                # ombro -> cotovelo (centros)
 FOREARM_LEN = 80                                  # cotovelo -> centro da mão
 ARM_W = 22
 HAND_R = 11
+OUTLINE_W = 3.5                                   # = raio do feMorphology do contorno de silhueta
 EYE_R = 13.9
 EYE_CY = 148
 EYE_CX = {"left": 320.3, "right": 359.7}
@@ -94,6 +95,7 @@ LOOK_X_MAX = 0.47                                 # fração do raio do olho
 LOOK_Y_MAX = 0.45
 BROW = {"left": (308, 119), "right": (348, 119)}  # x, y do rect 24x5
 BROW_W, BROW_H = 24, 5
+SMILE_CLOSED = 0.85                               # eyes.smile a partir daqui: olho fechado sorrindo
 BROW_RAISE_PX = 8                                 # raise = 1 -> sobe 8 px
 TORSO_X = (285, 395)
 
@@ -142,6 +144,13 @@ def npc_defaults(i: int) -> dict:
 def resolve_params(raw: dict) -> dict:
     poses = load_json(os.path.join(PRESETS_DIR, "poses.json"))
     expressions = load_json(os.path.join(PRESETS_DIR, "expressions.json"))
+    if raw.get("tipo"):     # tipo que se repete (presets/tipos.json); chaves explícitas sobrescrevem
+        tipos = load_json(os.path.join(PRESETS_DIR, "tipos.json"))
+        if raw["tipo"] not in tipos or raw["tipo"].startswith("_"):
+            raise SystemExit(f"tipo desconhecido: {raw['tipo']!r} (use {[k for k in tipos if not k.startswith('_')]})")
+        base = json.loads(json.dumps(tipos[raw["tipo"]]))
+        base.update({k: v for k, v in raw.items() if k != "tipo"})
+        raw = base
     if raw.get("npc") is not None:
         base = npc_defaults(int(raw["npc"]))
         base.update({k: v for k, v in raw.items() if k != "npc"})
@@ -197,6 +206,7 @@ def resolve_params(raw: dict) -> dict:
         "look_y": clamp(eyes.get("look_y", 0), -1, 1),
         "lid_upper": clamp(eyes.get("lid_upper", 0), 0, 1),
         "lid_lower": clamp(eyes.get("lid_lower", 0), 0, 1),
+        "smile": clamp(eyes.get("smile", 0), 0, 1),   # 0..1: pálpebra de baixo curva (feliz); >= 0,85 = fechado sorrindo (^ ^)
     }
     p["brows"] = {
         "raise": clamp(brows.get("raise", 0), -1, 1),
@@ -224,6 +234,33 @@ def resolve_params(raw: dict) -> dict:
         if glasses["style"] not in GLASSES:
             raise SystemExit(f"óculos desconhecido: {glasses['style']!r} (use {list(GLASSES)})")
     p["glasses"] = glasses
+
+    # roupas e acessórios extras (pacote de 2026-11-05): todos opcionais
+    def opt(key, default_style=None):
+        v = raw.get(key)
+        if v is None or v is False:
+            return None
+        if isinstance(v, str):
+            v = {"style": v} if not v.startswith("#") else {"color": v}
+        v = dict(v)
+        if default_style:
+            v.setdefault("style", default_style)
+        return v
+    p["jacket"] = opt("jacket")
+    p["vest"] = opt("vest")
+    p["tie"] = opt("tie", "gravata")
+    p["suspenders"] = opt("suspenders")
+    p["hat"] = opt("hat", "coco")
+    p["mustache"] = opt("mustache", "cheio")
+    # proporção da cabeça (criança: escala do personagem ~0.72 com head_scale 1.25 = cabeça 0.9)
+    p["head_scale"] = clamp(float(raw.get("head_scale", 1.0)), 0.7, 1.5)
+    if p["hat"] and p["hat"]["style"] not in HATS:
+        raise SystemExit(f"chapéu desconhecido: {p['hat']['style']!r} (use {list(HATS)})")
+    if p["mustache"] and p["mustache"]["style"] not in MUSTACHES:
+        raise SystemExit(f"bigode desconhecido: {p['mustache']['style']!r} (use {list(MUSTACHES)})")
+    if p["tie"] and p["tie"]["style"] not in ("gravata", "borboleta"):
+        raise SystemExit(f"gravata desconhecida: {p['tie']['style']!r} (use gravata | borboleta)")
+    p["sleeve"] = p["jacket"].get("color", "#3a3f4a") if p["jacket"] else p["shirt"]
     return p
 
 
@@ -249,10 +286,45 @@ def arm_crosses(side: str, pose: dict) -> bool:
     return inner(hx) or inner(ex)
 
 
+def svg_hand(cx, cy, skin: str) -> str:
+    """Mão com contorno próprio em todo o círculo (anel preto por baixo), para não sumir
+    quando passa na frente do corpo. Mesma espessura do contorno de silhueta."""
+    return (f'<circle class="hand-ring" cx="{f(cx)}" cy="{f(cy)}" r="{f(HAND_R + OUTLINE_W)}" fill="{OUTLINE_COLOR}"/>'
+            f'<circle class="hand" cx="{f(cx)}" cy="{f(cy)}" r="{HAND_R}" fill="{skin}"/>')
+
+
+def outline_copy(fragment: str) -> str:
+    """Cópia preta engrossada de um trecho de SVG (traço de 2 x OUTLINE_W), para pôr por baixo.
+    Usada no objeto segurado: ele fica sobre o corpo e precisa de contorno próprio."""
+    import re
+    u = re.sub(r' fill="(?!none)[^"]*"', f' fill="{OUTLINE_COLOR}"', fragment)
+    u = re.sub(r' stroke="[^"]*"', f' stroke="{OUTLINE_COLOR}"', u)
+    u = re.sub(r' stroke-width="([^"]*)"', lambda m: f' stroke-width="{f(float(m.group(1)) + 2 * OUTLINE_W)}"', u)
+    u = re.sub(r' opacity="[^"]*"', "", u)
+    u = re.sub(r' class="[^"]*"', "", u)
+    return (f'<g class="outline-copy" stroke="{OUTLINE_COLOR}" stroke-width="{f(2 * OUTLINE_W)}" '
+            f'stroke-linejoin="round">{u}</g>')
+
+
+def svg_arm_outline(side: str, shoulder: float, elbow: float) -> str:
+    """Contorno explícito do braço que cruza o corpo: cópia preta engrossada por baixo das duas
+    peças (sem emenda no cotovelo). Não depende do filtro, então sobrevive quando o vídeo troca o
+    filtro por um contorno único do personagem inteiro."""
+    sx, sy = SHOULDER[side]
+    o, w = OUTLINE_W, ARM_W + 2 * OUTLINE_W
+    return (
+        f'<g class="arm-outline" transform="translate({sx},{sy}) rotate({f(shoulder)})" fill="{OUTLINE_COLOR}">'
+        f'<rect x="{f(-11 - o)}" y="{f(-11 - o)}" width="{f(w)}" height="{f(107 + 2 * o)}" rx="{f(11 + o)}"/>'
+        f'<g transform="translate(0,{UPPER_ARM_LEN}) rotate({f(elbow)})">'
+        f'<rect x="{f(-11 - o)}" y="{f(-11 - o)}" width="{f(w)}" height="{f(91 + 2 * o)}" rx="{f(11 + o)}"/>'
+        '</g></g>'
+    )
+
+
 def svg_arm(side: str, shoulder: float, elbow: float, shirt: str, skin: str,
             draw_hand: bool = True) -> str:
     sx, sy = SHOULDER[side]
-    hand = f'<circle cx="0" cy="{FOREARM_LEN}" r="{HAND_R}" fill="{skin}"/>' if draw_hand else ""
+    hand = svg_hand(0, FOREARM_LEN, skin) if draw_hand else ""
     return (
         f'<g class="arm-{side}" transform="translate({sx},{sy}) rotate({f(shoulder)})">'
         f'<rect x="-11" y="-11" width="{ARM_W}" height="107" rx="11" fill="{shirt}"/>'
@@ -316,6 +388,12 @@ def svg_eye(side: str, iris: str, skin: str, e: dict, uid: str = "") -> str:
     lo_edge = max(cy + r - e["lid_lower"] * 2 * r, up_edge)   # nunca acima da superior
     cid = f"{uid}eye-{side}"
     x0, x1 = cx - r - 2, cx + r + 2
+    sm = e.get("smile", 0)
+    if sm >= SMILE_CLOSED:   # riso: olho vira um arco (^), sem branco nem contorno do olho
+        return (f'<g class="eye eye-{side} eye-smile"><path d="M{f(cx - r * 0.95)} {f(cy + r * 0.3)} '
+                f'Q{f(cx)} {f(cy - r * 1.05)} {f(cx + r * 0.95)} {f(cy + r * 0.3)}" fill="none" stroke="#111" '
+                f'stroke-width="{f(EYE_STROKE + 1.5)}" stroke-linecap="round"/></g>')
+    bulge = sm * r * 0.7      # pálpebra de baixo em arco (centro mais alto que as pontas)
     parts = [
         f'<g class="eye eye-{side}">',
         f'<clipPath id="{cid}"><circle cx="{f(cx)}" cy="{cy}" r="{r}"/></clipPath>',
@@ -326,14 +404,18 @@ def svg_eye(side: str, iris: str, skin: str, e: dict, uid: str = "") -> str:
         # pálpebra superior
         f'<rect class="lid-upper" x="{f(x0)}" y="{f(cy - r - 2)}" width="{f(x1 - x0)}" '
         f'height="{f(max(up_edge - (cy - r - 2), 0))}" fill="{skin}"/>',
-        # pálpebra inferior
-        f'<rect class="lid-lower" x="{f(x0)}" y="{f(lo_edge)}" width="{f(x1 - x0)}" '
-        f'height="{f(max(cy + r + 2 - lo_edge, 0))}" fill="{skin}"/>',
+        # pálpebra inferior (reta, ou em arco quando smile > 0)
+        (f'<rect class="lid-lower" x="{f(x0)}" y="{f(lo_edge)}" width="{f(x1 - x0)}" '
+         f'height="{f(max(cy + r + 2 - lo_edge, 0))}" fill="{skin}"/>' if not bulge else
+         f'<path class="lid-lower" d="M{f(x0)} {f(lo_edge + bulge * 0.5)} Q{f(cx)} {f(lo_edge - bulge * 1.5)} {f(x1)} {f(lo_edge + bulge * 0.5)} '
+         f'L{f(x1)} {f(cy + r + 2)} L{f(x0)} {f(cy + r + 2)} Z" fill="{skin}"/>'
+         f'<path d="M{f(x0)} {f(lo_edge + bulge * 0.5)} Q{f(cx)} {f(lo_edge - bulge * 1.5)} {f(x1)} {f(lo_edge + bulge * 0.5)}" '
+         f'fill="none" stroke="#111" stroke-width="{LID_STROKE}"/>'),
     ]
     if e["lid_upper"] >= LID_HIDE:
         parts.append(f'<line x1="{f(x0)}" y1="{f(up_edge)}" x2="{f(x1)}" y2="{f(up_edge)}" '
                      f'stroke="#111" stroke-width="{LID_STROKE}"/>')
-    if e["lid_lower"] >= LID_HIDE:
+    if e["lid_lower"] >= LID_HIDE and not bulge:
         parts.append(f'<line x1="{f(x0)}" y1="{f(lo_edge)}" x2="{f(x1)}" y2="{f(lo_edge)}" '
                      f'stroke="#111" stroke-width="{LID_STROKE}"/>')
     parts.append("</g>")
@@ -383,7 +465,131 @@ def svg_glasses_escuros(g: dict, uid: str = "") -> str:
     return "".join(out)
 
 
-GLASSES = {"escuros": svg_glasses_escuros}
+def svg_glasses_grau(g: dict, uid: str = "") -> str:
+    """Óculos de grau: aros finos em volta dos olhos (os olhos continuam visíveis)."""
+    c = g.get("color", "#2b2b2b")
+    out = ['<g class="glasses">']
+    for cx in EYE_CX.values():
+        out.append(f'<circle cx="{f(cx)}" cy="{EYE_CY}" r="18.5" fill="#ffffff" fill-opacity="0.12" stroke="{c}" stroke-width="4"/>')
+    out.append(f'<path d="M{f(EYE_CX["left"] + 18)} {EYE_CY - 3} Q340 {EYE_CY - 9} {f(EYE_CX["right"] - 18)} {EYE_CY - 3}" '
+               f'fill="none" stroke="{c}" stroke-width="4"/>')
+    out.append(f'<path d="M{f(EYE_CX["left"] - 18)} {EYE_CY - 2} L284 {EYE_CY - 8}" stroke="{c}" stroke-width="4"/>'
+               f'<path d="M{f(EYE_CX["right"] + 18)} {EYE_CY - 2} L396 {EYE_CY - 8}" stroke="{c}" stroke-width="4"/>')
+    out.append("</g>")
+    return "".join(out)
+
+
+GLASSES = {"escuros": svg_glasses_escuros, "grau": svg_glasses_grau}
+
+
+# ---------------------------------------------------------------- roupas de cima (sobre o tronco)
+NECK_Y = 198            # base da cabeça
+HEM_Y = 385
+
+
+def shade_hex(c: str, k: float) -> str:
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    t = 255 if k > 0 else 0
+    k = abs(k)
+    return "#" + "".join(f"{round(v + (t - v) * k):02x}" for v in (r, g, b))
+
+
+def svg_clothes(p: dict) -> str:
+    """Suspensório, colete, gravata e paletó desenhados sobre o tronco (dentro do grupo de cima)."""
+    out = []
+    j, v, t, su = p["jacket"], p["vest"], p["tie"], p["suspenders"]
+    if su and not j:
+        c = su.get("color", "#5a3a26")
+        out += [f'<rect x="304" y="{NECK_Y}" width="11" height="{HEM_Y - NECK_Y}" fill="{c}"/>',
+                f'<rect x="365" y="{NECK_Y}" width="11" height="{HEM_Y - NECK_Y}" fill="{c}"/>']
+    if v:
+        vc = v.get("color", "#5a4a3a")
+        vee = 262 if not j else 250
+        out.append(f'<path d="M287 {NECK_Y + 30} Q300 {NECK_Y} 322 {NECK_Y} L340 {vee} L358 {NECK_Y} Q380 {NECK_Y} 393 {NECK_Y + 30} '
+                   f'L393 {HEM_Y - 10} L340 {HEM_Y + 8} L287 {HEM_Y - 10} Z" fill="{vc}"/>')
+        out += [f'<circle cx="340" cy="{y}" r="4" fill="{shade_hex(vc, -0.35)}"/>' for y in (280, 310, 340)]
+    if t:
+        tc = t.get("color", "#b23a3a")
+        if t["style"] == "borboleta":
+            out.append(f'<path d="M340 {NECK_Y + 8} L320 {NECK_Y - 2} L320 {NECK_Y + 18} Z M340 {NECK_Y + 8} L360 {NECK_Y - 2} L360 {NECK_Y + 18} Z" fill="{tc}"/>'
+                       f'<rect x="334" y="{NECK_Y + 2}" width="12" height="12" rx="3" fill="{shade_hex(tc, -0.2)}"/>')
+        else:
+            low = 300 if (j or v) else 330
+            out.append(f'<path d="M333 {NECK_Y} L347 {NECK_Y} L344 {NECK_Y + 14} L336 {NECK_Y + 14} Z" fill="{shade_hex(tc, -0.15)}"/>'
+                       f'<path d="M336 {NECK_Y + 14} L344 {NECK_Y + 14} L351 {low - 12} L340 {low} L329 {low - 12} Z" fill="{tc}"/>')
+    if j:
+        jc = j.get("color", "#3a3f4a")
+        vee = 330 if v else 312
+        out.append(f'<path d="M285 {HEM_Y + 6} L285 225 Q285 192 326 {NECK_Y} L340 {vee} L340 {HEM_Y + 6} Z" fill="{jc}"/>'
+                   f'<path d="M395 {HEM_Y + 6} L395 225 Q395 192 354 {NECK_Y} L340 {vee} L340 {HEM_Y + 6} Z" fill="{jc}"/>')
+        ld = shade_hex(jc, -0.22)
+        out.append(f'<path d="M326 {NECK_Y} L316 238 L330 250 L340 {vee} Z" fill="{ld}"/>'
+                   f'<path d="M354 {NECK_Y} L364 238 L350 250 L340 {vee} Z" fill="{ld}"/>')
+        out.append(f'<line x1="340" y1="{vee}" x2="340" y2="{HEM_Y + 6}" stroke="{ld}" stroke-width="3"/>')
+        out += [f'<circle cx="348" cy="{y}" r="4.5" fill="{ld}"/>' for y in (vee + 16, vee + 40)]
+        if j.get("lenco"):
+            out.append('<path d="M298 258 L318 258 L314 250 L306 254 L302 248 Z" fill="#ffffff"/>')
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- chapéus (topo da cabeça) e bigodes
+def hat_coco(h):
+    c = h.get("color", "#2b2b2b")
+    return (f'<path d="M286 104 Q284 46 340 44 Q396 46 394 104 Z" fill="{c}"/>'
+            f'<rect x="288" y="92" width="104" height="12" fill="{shade_hex(c, 0.25)}"/>'
+            f'<ellipse cx="340" cy="106" rx="76" ry="10" fill="{c}"/>')
+
+
+def hat_cartola(h):
+    c = h.get("color", "#1f1f1f")
+    return (f'<path d="M296 104 L300 18 L380 18 L384 104 Z" fill="{c}"/>'
+            f'<rect x="297" y="82" width="86" height="14" fill="{shade_hex(c, 0.3)}"/>'
+            f'<ellipse cx="340" cy="18" rx="40" ry="7" fill="{shade_hex(c, 0.12)}"/>'
+            f'<ellipse cx="340" cy="106" rx="78" ry="10" fill="{c}"/>')
+
+
+def hat_capacete(h):
+    c = h.get("color", "#f2c14e")
+    return (f'<path d="M282 108 Q280 40 340 38 Q400 40 398 108 Z" fill="{c}"/>'
+            f'<rect x="334" y="40" width="12" height="66" rx="5" fill="{shade_hex(c, -0.15)}"/>'
+            f'<rect x="270" y="102" width="140" height="14" rx="7" fill="{shade_hex(c, -0.1)}"/>')
+
+
+def hat_quepe(h):
+    c = h.get("color", "#26324a")
+    return (f'<path d="M282 104 L276 66 Q340 34 404 66 L398 104 Z" fill="{c}"/>'
+            f'<rect x="282" y="92" width="116" height="14" fill="{shade_hex(c, -0.3)}"/>'
+            f'<circle cx="340" cy="78" r="9" fill="#d9b14a"/>'
+            f'<path d="M290 104 Q340 128 390 104 Z" fill="#1a1a1a"/>')
+
+
+def hat_bone(h):
+    c = h.get("color", "#c24a3a")
+    return (f'<path d="M284 108 Q282 52 340 50 Q398 52 396 108 Z" fill="{c}"/>'
+            f'<path d="M340 108 Q392 98 428 112 Q392 120 340 114 Z" fill="{shade_hex(c, -0.15)}"/>'
+            f'<circle cx="340" cy="52" r="6" fill="{shade_hex(c, -0.2)}"/>')
+
+
+HATS = {"coco": hat_coco, "cartola": hat_cartola, "capacete": hat_capacete, "quepe": hat_quepe, "bone": hat_bone}
+
+
+def mustache_cheio(m):
+    c = m.get("color", "#3a2a20")
+    return f'<path d="M340 172 Q322 166 308 174 Q314 186 326 184 Q336 182 340 178 Q344 182 354 184 Q366 186 372 174 Q358 166 340 172 Z" fill="{c}"/>'
+
+
+def mustache_fino(m):
+    c = m.get("color", "#3a2a20")
+    return f'<path d="M340 174 Q326 170 314 176 Q326 180 340 178 Q354 180 366 176 Q354 170 340 174 Z" fill="{c}"/>'
+
+
+def mustache_guidao(m):
+    c = m.get("color", "#3a2a20")
+    return (f'<path d="M340 172 Q324 166 312 174 Q302 182 292 170 Q294 186 312 184 Q330 182 340 178 '
+            f'Q350 182 368 184 Q386 186 388 170 Q378 182 368 174 Q356 166 340 172 Z" fill="{c}"/>')
+
+
+MUSTACHES = {"cheio": mustache_cheio, "fino": mustache_fino, "guidao": mustache_guidao}
 
 
 # ---------------------------------------------------------------- cabelo
@@ -437,14 +643,16 @@ def compose_group(p: dict, uid: str = "", upper_dy: float = 0.0) -> str:
         holds = held is not None and held["hand"] == side
         crosses = arm_crosses(side, pose)
         if not holds and not crosses:
-            back_arms.append(svg_arm(side, sh, el, p["shirt"], p["skin"]))
+            back_arms.append(svg_arm(side, sh, el, p["sleeve"], p["skin"]))
             continue
         # braço + objeto + mão em grupo próprio; mão por cima do objeto
         _, _, (hx, hy) = arm_points(side, sh, el)
-        g = [svg_arm(side, sh, el, p["shirt"], p["skin"], draw_hand=False)]
+        g = [svg_arm_outline(side, sh, el) if crosses else "",
+             svg_arm(side, sh, el, p["sleeve"], p["skin"], draw_hand=False)]
         if holds:
-            g.append(HELD_OBJECTS[held["type"]](hx, hy, side, held.get("color")))
-        g.append(f'<circle class="hand" cx="{f(hx)}" cy="{f(hy)}" r="{HAND_R}" fill="{p["skin"]}"/>')
+            obj = HELD_OBJECTS[held["type"]](hx, hy, side, held.get("color"))
+            g.append(outline_copy(obj) + obj)
+        g.append(svg_hand(hx, hy, p["skin"]))
         group = f'<g class="limb-{side}" filter="url(#outline)">{"".join(g)}</g>'
         if crosses:
             front_groups.append(group)
@@ -455,6 +663,15 @@ def compose_group(p: dict, uid: str = "", upper_dy: float = 0.0) -> str:
     main_back = [a for a in back_arms if 'filter=' not in a]
     own_back = [a for a in back_arms if 'filter=' in a]
 
+    hs = p["head_scale"]
+
+    def headg(content: str) -> str:
+        """Camadas da cabeça escaladas a partir da base do queixo (proporção de criança etc.)."""
+        if hs == 1.0 or not content:
+            return content
+        py = HEAD_CY + HEAD_R
+        return f'<g class="head-scale" transform="translate({HEAD_CX},{py}) scale({f(hs)}) translate({-HEAD_CX},{-py})">{content}</g>'
+
     def upper(content: str) -> str:
         if not content:
             return ""
@@ -464,15 +681,18 @@ def compose_group(p: dict, uid: str = "", upper_dy: float = 0.0) -> str:
 
     body = (
         '<g class="character" filter="url(#outline)">'
-        + upper(f'<g class="hair-back" color="{hc}" fill="currentColor">{hair_back}</g>'
+        + upper(headg(f'<g class="hair-back" color="{hc}" fill="currentColor">{hair_back}</g>')
                 + "".join(main_back))
         + f'{bp["legs"]}{bp["shoes"]}'
-        + upper(f'{bp["torso"]}{bp["head"]}'
+        + upper(f'{bp["torso"]}{svg_clothes(p)}'
+                + headg(f'{bp["head"]}'
                 f'{svg_eye("left", p["iris"], p["skin"], p["eyes"], uid)}'
                 f'{svg_eye("right", p["iris"], p["skin"], p["eyes"], uid)}'
                 f'{svg_brows(p["brow_color"], p["brows"])}'
                 f'<g class="hair-front" color="{hc}" fill="currentColor">{hair_front}</g>'
-                + (GLASSES[p["glasses"]["style"]](p["glasses"], uid) if p["glasses"] else ""))
+                + (MUSTACHES[p["mustache"]["style"]](p["mustache"]) if p["mustache"] else "")
+                + (GLASSES[p["glasses"]["style"]](p["glasses"], uid) if p["glasses"] else "")
+                + (f'<g class="hat">{HATS[p["hat"]["style"]](p["hat"])}</g>' if p["hat"] else "")))
         + '</g>'
     )
     # braço que segura sem cruzar: desenhado antes do corpo, contorno próprio

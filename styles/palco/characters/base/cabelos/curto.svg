@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "curto" do estilo palco (2026-11-05). Partes id="back" e id="front"; cor via currentColor.
+       Coordenadas base: cabeça r=58 em (340,140). Corte rente: só a calota (atrás, borda fina até a orelha),
+       linha do cabelo alta e costeletas curtas; a testa e as laterais da cabeça ficam à mostra (≠ default). -->
+  <g id="back" fill="currentColor"><path d="M278 136 A62 64 0 0 1 402 136 Z"/></g>
+  <g id="front" fill="currentColor">
+    <path d="M283 124 Q287 80 340 77 Q393 80 397 124 Q388 98 340 96 Q292 98 283 124 Z"/>
+    <path d="M283 120 L285 148 L291 148 L292 108 Z"/>
+    <path d="M397 120 L395 148 L389 148 L388 108 Z"/>
+  </g>
+</svg>

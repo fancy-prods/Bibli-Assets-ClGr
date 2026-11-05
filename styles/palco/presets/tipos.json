@@ -1,0 +1,18 @@
+{
+  "_doc": "Tipos que se repetem (aprovados em 2026-11-05). Uso: {\"tipo\": \"policial\"} nos params do montador; chaves explícitas sobrescrevem (ex.: {\"tipo\": \"policial\", \"skin\": \"#f1d6c2\"}). Criança: posicionar com escala ~0,72 da do adulto.",
+  "executivo": {"hair": {"style": "repartido", "color": "#3b2418"}, "shirt": "#f4efe6", "pants": "#2f3440",
+                "jacket": {"color": "#3a3f4a"}, "tie": {"color": "#8a2a2a"}},
+  "executivo_grisalho": {"hair": {"style": "entradas", "color": "#b9b9b9"}, "brow_color": "#9a9a9a", "shirt": "#f4efe6", "pants": "#2f3440",
+                         "jacket": {"color": "#4a4f5a"}, "tie": {"color": "#3f5f8a"}, "glasses": "grau", "mustache": "fino"},
+  "cavalheiro_epoca": {"hair": {"style": "repartido", "color": "#3b2418"}, "shirt": "#f4efe6", "pants": "#3a3a40",
+                       "vest": {"color": "#6a5a4a"}, "tie": {"color": "#3f5f8a"}, "hat": "coco", "mustache": "cheio"},
+  "traje_de_gala": {"hair": {"style": "repartido", "color": "#3b2418"}, "shirt": "#f4efe6", "pants": "#2b2b30",
+                    "jacket": {"color": "#1f1f1f"}, "tie": {"style": "borboleta", "color": "#8a2a2a"}, "hat": "cartola", "mustache": "guidao"},
+  "trabalhador_epoca": {"hair": {"style": "curto", "color": "#3b2418"}, "shirt": "#e8dcc4", "pants": "#3a3a40",
+                        "suspenders": {"color": "#5a3a26"}, "hat": {"style": "bone", "color": "#6a5a4a"}},
+  "operario": {"npc": 3, "shirt": "#5a7aa0", "hat": "capacete"},
+  "policial": {"skin": "#c48c64", "shirt": "#26324a", "pants": "#26324a", "jacket": {"color": "#26324a"}, "tie": {"color": "#1a1a1a"},
+               "hat": "quepe", "hair": {"style": "curto", "color": "#1a1a1a"}},
+  "professora": {"hair": {"style": "coque", "color": "#6b4a2a"}, "shirt": "#c24a3a", "glasses": "grau"},
+  "crianca": {"hair": {"style": "cacheado", "color": "#2b1d16"}, "skin": "#8d5a3c", "shirt": "#f2c14e", "head_scale": 1.25}
+}

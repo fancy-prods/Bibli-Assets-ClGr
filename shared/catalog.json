@@ -126,6 +126,39 @@
       ],
       "status": "active",
       "notes": "Mesmo livro e mesmo tempo em todos os templates; só o texto muda. Larguras de texto medidas com resvg_py (dependências: resvg_py, av, numpy; fontes do Windows). Templates de texto escuro (marca-texto, impacto) precisam de fundo claro ou de uma base por trás. Comparação em fundo branco: ferramentas/video/headline_templates.py (inclui os protótipos não registrados 'editorial' e 'digitando')."
+    },
+    {
+      "id": "shared.cinema",
+      "name": "Efeitos cinematográficos calmos (sépia, desfoque, cartela, faixas)",
+      "style": "shared",
+      "type": "module",
+      "dimension": "2d",
+      "tags": [
+        "efeito",
+        "cinema",
+        "sepia",
+        "flashback",
+        "desfoque",
+        "profundidade",
+        "rack-focus",
+        "cartela",
+        "maquina-de-escrever",
+        "letterbox",
+        "transicao"
+      ],
+      "params": {
+        "sepia_filter": "fid, k 0..1, fade 0..1 (leve: 0,3)",
+        "blur_filter": "fid, sd, w, h (userSpaceOnUse, num <g> por fora da câmera)",
+        "rack_focus": "t, t0, t1, far_sd, near_sd, to_far -> (sd_fundo, sd_frente)",
+        "parallax_dx": "cx, cx0, z, factor",
+        "fade_through": "t, t_mid, dur",
+        "typewriter": "text, t, t0, x, y, size, cps... (+ typewriter_keys para o som)",
+        "letterbox": "w, h, k 0..1, ratio 2.39"
+      },
+      "path": "shared/motion-utils/cinema.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Só biblioteca padrão; agnóstico de estilo. Feito para vídeos longos e calmos (amigos1). Sépia quente (luminância tingida de marrom). Som da cartela: 07_foley_cotidiano/Typewriter Sound Effect.mp3 alinhado com typewriter_keys. Desfoque testado na variante B da abertura do amigos1. Aprovado em 2026-11-05."
     }
   ]
 }

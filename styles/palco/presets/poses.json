@@ -1,31 +1,127 @@
 {
   "_doc": "Presets de pose validados (STYLE.md v1). Ângulos em graus no sentido do SVG (positivo = horário). Braço esquerdo (pivô x=279) para fora = positivo; braço direito (pivô x=401) para fora = negativo. crosses_body indica qual braço cruza o corpo e vai para o grupo da frente com filtro próprio.",
   "neutro": {
-    "right_shoulder": -4, "right_elbow": 0,
-    "left_shoulder": 4, "left_elbow": 0,
+    "right_shoulder": -4,
+    "right_elbow": 0,
+    "left_shoulder": 4,
+    "left_elbow": 0,
     "crosses_body": []
   },
   "explicando": {
-    "right_shoulder": -60, "right_elbow": -90,
-    "left_shoulder": 4, "left_elbow": 0,
+    "right_shoulder": -60,
+    "right_elbow": -90,
+    "left_shoulder": 4,
+    "left_elbow": 0,
     "crosses_body": []
   },
   "acenando": {
-    "right_shoulder": -70, "right_elbow": -100,
-    "left_shoulder": 4, "left_elbow": 0,
+    "right_shoulder": -70,
+    "right_elbow": -100,
+    "left_shoulder": 4,
+    "left_elbow": 0,
     "crosses_body": []
   },
   "pensativo": {
     "_desc": "mão no queixo; braço direito cruza o corpo",
-    "right_shoulder": 40, "right_elbow": 135,
-    "left_shoulder": 4, "left_elbow": 0,
-    "crosses_body": ["right"]
+    "right_shoulder": 40,
+    "right_elbow": 135,
+    "left_shoulder": 4,
+    "left_elbow": 0,
+    "crosses_body": [
+      "right"
+    ]
   },
   "segurando_caneca": {
     "_desc": "braço direito cruza o corpo segurando caneca",
-    "right_shoulder": 10, "right_elbow": 150,
-    "left_shoulder": 4, "left_elbow": 0,
-    "crosses_body": ["right"],
-    "default_held_object": {"type": "caneca", "hand": "right"}
+    "right_shoulder": 10,
+    "right_elbow": 150,
+    "left_shoulder": 4,
+    "left_elbow": 0,
+    "crosses_body": [
+      "right"
+    ],
+    "default_held_object": {
+      "type": "caneca",
+      "hand": "right"
+    }
+  },
+  "bracos_cruzados": {
+    "_desc": "braços cruzados: antebraços quase horizontais no meio do peito (IK até (300,282)/(380,296))",
+    "right_shoulder": -1,
+    "right_elbow": 98,
+    "left_shoulder": 1,
+    "left_elbow": -90,
+    "crosses_body": [
+      "right",
+      "left"
+    ]
+  },
+  "maos_na_cintura": {
+    "_desc": "cotovelos para fora, mãos no quadril",
+    "right_shoulder": -35,
+    "right_elbow": 73,
+    "left_shoulder": 35,
+    "left_elbow": -73,
+    "crosses_body": []
+  },
+  "apontando": {
+    "_desc": "braço direito esticado para o lado (aponta para quem está à direita da tela)",
+    "right_shoulder": -100,
+    "right_elbow": 0,
+    "left_shoulder": 4,
+    "left_elbow": 0,
+    "crosses_body": []
+  },
+  "dando_de_ombros": {
+    "_desc": "antebraços abertos para cima (\"sei lá\"); combine com sobrancelhas levantadas",
+    "right_shoulder": -40,
+    "right_elbow": -70,
+    "left_shoulder": 40,
+    "left_elbow": 70,
+    "crosses_body": []
+  },
+  "comemorando": {
+    "_desc": "os dois braços para cima",
+    "right_shoulder": -155,
+    "right_elbow": -12,
+    "left_shoulder": 155,
+    "left_elbow": 12,
+    "crosses_body": []
+  },
+  "encolhido": {
+    "_desc": "braços fechados na frente da barriga (timidez, insegurança)",
+    "right_shoulder": 12,
+    "right_elbow": 70,
+    "left_shoulder": -12,
+    "left_elbow": -70,
+    "crosses_body": [
+      "right",
+      "left"
+    ]
+  },
+  "segurando_livro": {
+    "_desc": "braço direito cruza o corpo segurando um livro",
+    "right_shoulder": 10,
+    "right_elbow": 150,
+    "left_shoulder": 4,
+    "left_elbow": 0,
+    "crosses_body": [
+      "right"
+    ],
+    "default_held_object": {
+      "type": "livro",
+      "hand": "right"
+    }
+  },
+  "maos_na_cabeca": {
+    "right_shoulder": -124,
+    "right_elbow": -137,
+    "left_shoulder": 124,
+    "left_elbow": 137,
+    "crosses_body": [
+      "left",
+      "right"
+    ],
+    "_desc": "mãos dos lados da cabeça, cotovelos abertos para cima (desespero, espanto, \"e agora?\")"
   }
 }

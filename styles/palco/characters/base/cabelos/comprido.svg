@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "comprido" do estilo palco (aprovado em 2026-11-05). Partes id="back" e id="front"; cor via currentColor.
+       Coordenadas base: cabeça r=58 em (340,140). Comprido até os ombros, franja de lado. -->
+  <g id="back" fill="currentColor"><path d="M276 140 Q272 70 340 68 Q408 70 404 140 L410 252 Q376 266 340 262 Q304 266 270 252 Z"/></g>
+  <g id="front" fill="currentColor"><path d="M281 142 Q282 82 340 78 Q398 82 399 142 Q388 110 356 104 Q322 102 302 118 Q288 128 281 142 Z"/></g>
+</svg>

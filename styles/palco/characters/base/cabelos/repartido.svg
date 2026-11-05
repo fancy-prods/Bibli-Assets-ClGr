@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "repartido" do estilo palco (aprovado em 2026-11-05). Partes id="back" e id="front"; cor via currentColor.
+       Coordenadas base: cabeça r=58 em (340,140). Repartido de lado (bom para época). -->
+  <g id="back" fill="currentColor"><ellipse cx="340" cy="132" rx="63" ry="58"/></g>
+  <g id="front" fill="currentColor"><path d="M281 140 Q280 84 334 80 Q400 80 399 134 Q382 100 334 104 Q300 108 281 140 Z"/><path d="M316 84 Q322 96 332 104" fill="none" stroke="#000000" stroke-opacity="0.22" stroke-width="3"/></g>
+</svg>

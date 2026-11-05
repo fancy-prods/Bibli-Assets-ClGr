@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "coque" do estilo palco (aprovado em 2026-11-05). Partes id="back" e id="front"; cor via currentColor.
+       Coordenadas base: cabeça r=58 em (340,140). Coque no alto da cabeça, cabelo puxado. -->
+  <g id="back" fill="currentColor"><ellipse cx="340" cy="132" rx="62" ry="58"/><circle cx="340" cy="66" r="28"/></g>
+  <g id="front" fill="currentColor"><path d="M282 134 Q284 84 340 82 Q396 84 398 134 Q380 110 340 110 Q300 110 282 134 Z"/></g>
+</svg>

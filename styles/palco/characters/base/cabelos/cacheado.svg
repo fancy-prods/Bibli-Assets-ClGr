@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <!-- Cabelo "cacheado" do estilo palco (aprovado em 2026-11-05). Partes id="back" e id="front"; cor via currentColor.
+       Coordenadas base: cabeça r=58 em (340,140). Cacheado volumoso. -->
+  <g id="back" fill="currentColor"><circle cx="282.8" cy="170.0" r="22"/><circle cx="274.4" cy="144.7" r="22"/><circle cx="277.2" cy="118.2" r="22"/><circle cx="291.0" cy="95.2" r="22"/><circle cx="313.2" cy="79.5" r="22"/><circle cx="340.0" cy="74.0" r="22"/><circle cx="366.8" cy="79.5" r="22"/><circle cx="389.0" cy="95.2" r="22"/><circle cx="402.8" cy="118.2" r="22"/><circle cx="405.6" cy="144.7" r="22"/><circle cx="397.2" cy="170.0" r="22"/><ellipse cx="340" cy="130" rx="60" ry="56"/></g>
+  <g id="front" fill="currentColor"><circle cx="290" cy="100" r="17"/><circle cx="310" cy="92" r="17"/><circle cx="330" cy="92" r="17"/><circle cx="350" cy="92" r="17"/><circle cx="370" cy="92" r="17"/><circle cx="390" cy="100" r="17"/></g>
+</svg>

@@ -101,6 +101,7 @@ Presets (provisórios): [`presets/expressions.json`](presets/expressions.json).
 - O contorno é um filtro aplicado ao grupo, não um traço por peça (ver seção 10). Contornar peça por peça é proibido, porque mostraria a emenda do cotovelo.
 - Todo membro que cruza o corpo forma um grupo com filtro próprio: braço, antebraço, objeto segurado e mão.
 - Os olhos mantêm o próprio contorno, mais fino.
+- **A mão tem contorno próprio em todo o círculo** (anel de 3,5 por baixo), sempre, para não sumir quando passa na frente do corpo. O braço que cruza o corpo e o objeto segurado também ganham contorno explícito por baixo (não dependem do filtro), então continuam contornados quando o vídeo troca o filtro por uma cópia preta do personagem inteiro. Decidido em 05/11/2026.
 - Objetos segurados ficam atrás da mão.
 
 ## 6. Acessórios

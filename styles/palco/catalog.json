@@ -22,7 +22,7 @@
           "shoes": "#hex"
         },
         "hair": {
-          "style": "nome em characters/base/cabelos/",
+          "style": "default | curto | repartido | comprido | coque | cacheado | entradas | careca (characters/base/cabelos/)",
           "color": "#hex"
         },
         "brow_color": "#hex",
@@ -41,16 +41,41 @@
         },
         "npc": "int: figurante cinza (ver palco.preset_npc)",
         "glasses": {
-          "style": "escuros",
-          "glint": "0..1 | null"
-        }
+          "style": "escuros | grau",
+          "glint": "0..1 | null (escuros)",
+          "color": "#hex (grau)"
+        },
+        "jacket": {
+          "color": "#hex",
+          "lenco": "bool"
+        },
+        "vest": {
+          "color": "#hex"
+        },
+        "tie": {
+          "style": "gravata | borboleta",
+          "color": "#hex"
+        },
+        "suspenders": {
+          "color": "#hex"
+        },
+        "hat": {
+          "style": "coco | cartola | capacete | quepe | bone",
+          "color": "#hex"
+        },
+        "mustache": {
+          "style": "cheio | fino | guidao",
+          "color": "#hex"
+        },
+        "head_scale": "0.7..1.5 (default 1; criança 1.25 com escala ~0.72)",
+        "tipo": "preset de presets/tipos.json (ver palco.presets_tipos)"
       },
       "path": "styles/palco/tools/compose_character.py",
       "used_in": [
         "carlbob1"
       ],
       "status": "active",
-      "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/palco/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/palco/renders/."
+      "notes": "Montado pelo compose_character.py (fonte da verdade da geometria). Peças de referência em styles/palco/characters/base/; cabelo default em characters/base/cabelos/default.svg. Exemplos em styles/palco/renders/. Mãos com contorno em todo o círculo (OUTLINE_W 3,5); braço que cruza o corpo e objeto segurado ganham contorno próprio (aprovado em 2026-11-05; STYLE.md seção 5)."
     },
     {
       "id": "palco.olhos",
@@ -70,7 +95,8 @@
         "look_y": "-1..1 (até 0,45 r)",
         "lid_upper": "0..1",
         "lid_lower": "0..1",
-        "iris": "castanho #7a5230 | azul #3f7fc4 | verde #4a9a5c | mel #c08a2e | cinza #8f9aa3"
+        "iris": "castanho #7a5230 | azul #3f7fc4 | verde #4a9a5c | mel #c08a2e | cinza #8f9aa3",
+        "smile": "0..1: pálpebra de baixo em arco; >= 0,85 olho fechado sorrindo (^)"
       },
       "path": "styles/palco/characters/base/olho.svg",
       "used_in": [
@@ -117,7 +143,15 @@
           "explicando",
           "acenando",
           "pensativo",
-          "segurando_caneca"
+          "segurando_caneca",
+          "bracos_cruzados",
+          "maos_na_cintura",
+          "apontando",
+          "dando_de_ombros",
+          "comemorando",
+          "encolhido",
+          "segurando_livro",
+          "maos_na_cabeca"
         ]
       },
       "path": "styles/palco/presets/poses.json",
@@ -125,7 +159,7 @@
         "carlbob1"
       ],
       "status": "active",
-      "notes": "Ângulos de ombro e cotovelo validados no STYLE.md v1."
+      "notes": "Ângulos de ombro e cotovelo validados no STYLE.md v1. Novas (2026-11-05): bracos_cruzados, maos_na_cintura, apontando, dando_de_ombros, comemorando, encolhido, maos_na_cabeca, segurando_livro; ângulos por cinemática inversa."
     },
     {
       "id": "palco.presets_expressao",
@@ -149,7 +183,11 @@
           "bravo",
           "preocupado",
           "surpreso",
-          "triste"
+          "triste",
+          "rindo",
+          "feliz",
+          "envergonhado",
+          "determinado"
         ]
       },
       "path": "styles/palco/presets/expressions.json",
@@ -157,7 +195,7 @@
         "carlbob1"
       ],
       "status": "active",
-      "notes": "Provisório: a lista inicial de situações é pendência do STYLE.md."
+      "notes": "Provisório: a lista inicial de situações é pendência do STYLE.md. Novas (2026-11-05): rindo (olhos ^ ^ via eyes.smile 1), feliz (smile 0,8), envergonhado, determinado."
     },
     {
       "id": "palco.presets_iluminacao",
@@ -311,6 +349,535 @@
       ],
       "status": "active",
       "notes": "TVs, fones, caixas de celular e letreiro ELETRÔNICOS (Arial 900). Âncoras no comentário do arquivo."
+    },
+    {
+      "id": "palco.cenario_escritorio",
+      "name": "Cenário: escritório de executivo",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "escritorio",
+        "executivo",
+        "chefe",
+        "trabalho",
+        "epoca",
+        "negocios"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/escritorio_padrao.svg",
+          "epoca": "styles/palco/scenes/escritorio_epoca.svg"
+        }
+      },
+      "path": "styles/palco/scenes/escritorio_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Mesa de executivo no #front (esconde as pernas de quem senta). Época: papel listrado, lambri, luminária de banqueiro, telefone de disco, cabideiro com chapéu. Gerado por styles/palco/tools/cenarios/exportar.py (função escritorio em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py escritorio hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_sala_jantar",
+      "name": "Cenário: sala de jantar",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "jantar",
+        "familia",
+        "refeicao",
+        "casa",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/sala_jantar_padrao.svg",
+          "epoca_hora-entardecer": "styles/palco/scenes/sala_jantar_epoca_hora-entardecer.svg"
+        }
+      },
+      "path": "styles/palco/scenes/sala_jantar_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Mesa com toalha no #front, três lugares (x 240/540/840). Época: lustre e castiçais entre os lugares. Porta fora do 16:9 (x 2650) para entradas com pan. Gerado por styles/palco/tools/cenarios/exportar.py (função sala_jantar em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py sala_jantar hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_fabrica",
+      "name": "Cenário: fábrica / usina",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "fabrica",
+        "usina",
+        "operario",
+        "industria",
+        "trabalho",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/fabrica_padrao.svg"
+        }
+      },
+      "path": "styles/palco/scenes/fabrica_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Tijolo, janelas altas com chaminés, passarela, forno aceso (fonte de luz em x 20..560: não pôr gente na frente), máquina e caçamba no #front. Gerado por styles/palco/tools/cenarios/exportar.py (função fabrica em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py fabrica hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_parque",
+      "name": "Cenário: parque",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "parque",
+        "ar-livre",
+        "passeio",
+        "encontro",
+        "banco"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/parque_padrao.svg",
+          "hora-entardecer": "styles/palco/scenes/parque_hora-entardecer.svg"
+        }
+      },
+      "path": "styles/palco/scenes/parque_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Caminho em perspectiva, poste (aceso fora do dia) e árvore dentro da zona segura, banco em x 1230..1770 (âncora banco_sentado). Gerado por styles/palco/tools/cenarios/exportar.py (função parque em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py parque hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_balcao",
+      "name": "Cenário: balcão de atendimento / guichê",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "balcao",
+        "guiche",
+        "atendimento",
+        "banco",
+        "loja",
+        "fila",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/balcao_padrao.svg",
+          "epoca": "styles/palco/scenes/balcao_epoca.svg"
+        }
+      },
+      "path": "styles/palco/scenes/balcao_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Balcão com vidro (moderno) ou grade de latão (época) no #front; cliente de costas no primeiro plano (modo costas). Gerado por styles/palco/tools/cenarios/exportar.py (função balcao em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py balcao hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_sala_aula",
+      "name": "Cenário: sala de aula",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "escola",
+        "sala-de-aula",
+        "professor",
+        "alunos",
+        "quadro-negro",
+        "infantil",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "infantil": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/sala_aula_padrao.svg",
+          "epoca": "styles/palco/scenes/sala_aula_epoca.svg",
+          "infantil": "styles/palco/scenes/sala_aula_infantil.svg"
+        }
+      },
+      "path": "styles/palco/scenes/sala_aula_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Quadro-negro, mesa do professor, carteiras no #front com alunos de costas no primeiro plano. Infantil: alfabeto e formas na parede. Gerado por styles/palco/tools/cenarios/exportar.py (função sala_aula em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py sala_aula hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_sala_estar",
+      "name": "Cenário: sala de estar",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "casa",
+        "sala",
+        "sofa",
+        "familia",
+        "conversa",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/sala_estar_padrao.svg",
+          "epoca_hora-entardecer": "styles/palco/scenes/sala_estar_epoca_hora-entardecer.svg"
+        }
+      },
+      "path": "styles/palco/scenes/sala_estar_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Sofá (âncora sofa_sentados, recorte no assento) e mesa de centro no #front. Moderna: TV no rack. Época: gramofone, luminária de banqueiro. Gerado por styles/palco/tools/cenarios/exportar.py (função sala_estar em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py sala_estar hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_quarto",
+      "name": "Cenário: quarto",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "casa",
+        "quarto",
+        "cama",
+        "noite",
+        "infantil",
+        "dormir"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "infantil": "bool",
+        "epoca": "bool",
+        "hora": "noite (padrão) | dia | entardecer",
+        "variantes": {
+          "padrao": "styles/palco/scenes/quarto_padrao.svg",
+          "infantil_hora-dia": "styles/palco/scenes/quarto_infantil_hora-dia.svg"
+        }
+      },
+      "path": "styles/palco/scenes/quarto_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Cama à esquerda com colcha no #front (âncora deitado_cabeca); em pé ao lado em x 800. Infantil: estrelas e bola. Gerado por styles/palco/tools/cenarios/exportar.py (função quarto em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py quarto hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_rua",
+      "name": "Cenário: rua / calçada",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "rua",
+        "cidade",
+        "calcada",
+        "loja",
+        "noite",
+        "epoca"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "variantes": {
+          "padrao": "styles/palco/scenes/rua_padrao.svg",
+          "epoca": "styles/palco/scenes/rua_epoca.svg",
+          "hora-noite": "styles/palco/scenes/rua_hora-noite.svg"
+        }
+      },
+      "path": "styles/palco/scenes/rua_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Prédios coloridos com lojas, poste, calçada e asfalto. Época: toldos e lampião. Noite: janelas acesas. Gerado por styles/palco/tools/cenarios/exportar.py (função rua em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py rua hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_palco_neutro",
+      "name": "Cenário: palco neutro",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "palco",
+        "abstrato",
+        "explicacao",
+        "refletor",
+        "comparacao"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "refletores": "dois (quente × frio, para contrastes) | um",
+        "variantes": {
+          "padrao": "styles/palco/scenes/palco_neutro_padrao.svg",
+          "refletores-um": "styles/palco/scenes/palco_neutro_refletores-um.svg"
+        }
+      },
+      "path": "styles/palco/scenes/palco_neutro_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fundo escuro com refletores para explicações abstratas. Dois: quente em x 260 e frio em x 820 (pares simpatia × resistência). Âncoras esquerda/direita/centro. Gerado por styles/palco/tools/cenarios/exportar.py (função palco_neutro em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py palco_neutro hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.cenario_banquete",
+      "name": "Cenário: salão de banquete",
+      "style": "palco",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "banquete",
+        "jantar",
+        "festa",
+        "elite",
+        "epoca",
+        "salao"
+      ],
+      "params": {
+        "mundo": "altura 1920, x -2000 a 3100; 16:9 = x -1167..2247; zona segura 9:16 = x 0..1080",
+        "piso_y": 1257,
+        "personagens": "pés y 1600, escala 1.25 (sentado: seated_feet(), recorte no tampo)",
+        "hora": "noite (padrão)",
+        "variantes": {
+          "padrao": "styles/palco/scenes/banquete_padrao.svg"
+        }
+      },
+      "path": "styles/palco/scenes/banquete_padrao.svg",
+      "used_in": [],
+      "status": "active",
+      "notes": "Parede vinho com colunas, quadros, três lustres nos vãos e mesa longa no #front (lugares em x 240/540/840). Gerado por styles/palco/tools/cenarios/exportar.py (função banquete em cenarios.py/cenarios_genericos.py); outras horas/épocas: exportar.py banquete hora=noite -o x.svg. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.gerador_cenarios",
+      "name": "Gerador de cenários e objetos",
+      "style": "palco",
+      "type": "tool",
+      "dimension": "2d",
+      "tags": [
+        "cenario",
+        "objetos",
+        "gerador",
+        "16:9",
+        "9:16"
+      ],
+      "params": {
+        "cenario": "nome em CENARIOS",
+        "epoca": "bool",
+        "hora": "dia | entardecer | noite",
+        "extras": "por cenário (infantil, refletores)"
+      },
+      "path": "styles/palco/tools/cenarios/exportar.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Módulos em styles/palco/tools/cenarios/: cenarios.py e cenarios_genericos.py (um build por cenário: back, front, sources, pools, dark, anchors), cenarios_base.py (parede, piso, lambri, seated_feet com SEAT_HIP 235) e objetos.py (móveis e objetos usados pelos cenários; catalogados em palco.objetos). Novo cenário: escrever a função, registrar em CENARIOS e rodar exportar.py."
+    },
+    {
+      "id": "palco.cabelos",
+      "name": "Cabelos",
+      "style": "palco",
+      "type": "component",
+      "dimension": "2d",
+      "tags": [
+        "cabelo",
+        "personagem",
+        "penteado"
+      ],
+      "params": {
+        "style": "default | curto | repartido | comprido | coque | cacheado | entradas | careca",
+        "color": "#hex (currentColor)"
+      },
+      "path": "styles/palco/characters/base/cabelos/",
+      "used_in": [],
+      "status": "active",
+      "notes": "Cada SVG tem #back (atrás da cabeça) e #front (sobre olhos e sobrancelhas), cor via currentColor. Uso: {\"hair\": {\"style\": ..., \"color\": ...}}. Curto = rente com costeletas (≠ default); entradas = calvície com laterais. Novos aprovados em 2026-11-05."
+    },
+    {
+      "id": "palco.roupas_acessorios",
+      "name": "Roupas e acessórios (paletó, colete, gravata, chapéus, bigodes)",
+      "style": "palco",
+      "type": "component",
+      "dimension": "2d",
+      "tags": [
+        "roupa",
+        "paleto",
+        "terno",
+        "colete",
+        "gravata",
+        "borboleta",
+        "suspensorio",
+        "chapeu",
+        "cartola",
+        "capacete",
+        "quepe",
+        "bone",
+        "bigode",
+        "oculos",
+        "epoca"
+      ],
+      "params": {
+        "jacket": {
+          "color": "#hex",
+          "lenco": "bool"
+        },
+        "vest": {
+          "color": "#hex"
+        },
+        "tie": {
+          "style": "gravata | borboleta",
+          "color": "#hex"
+        },
+        "suspenders": {
+          "color": "#hex"
+        },
+        "hat": {
+          "style": "coco | cartola | capacete | quepe | bone",
+          "color": "#hex"
+        },
+        "mustache": {
+          "style": "cheio | fino | guidao",
+          "color": "#hex"
+        },
+        "glasses": {
+          "style": "grau",
+          "color": "#hex"
+        }
+      },
+      "path": "styles/palco/tools/compose_character.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Desenhados pelo montador (svg_clothes, HATS, MUSTACHES, svg_glasses_grau) dentro do grupo de cima, então respiram e ganham contorno. A manga acompanha a cor do paletó. Atalho: string vira style (\"hat\": \"coco\") ou cor (\"jacket\": \"#333\"). Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.presets_tipos",
+      "name": "Presets de tipos que se repetem",
+      "style": "palco",
+      "type": "preset",
+      "dimension": "2d",
+      "tags": [
+        "tipo",
+        "personagem",
+        "executivo",
+        "policial",
+        "operario",
+        "professora",
+        "crianca",
+        "epoca",
+        "gala"
+      ],
+      "params": {
+        "tipo": "executivo | executivo_grisalho | cavalheiro_epoca | traje_de_gala | trabalhador_epoca | operario | policial | professora | crianca"
+      },
+      "path": "styles/palco/presets/tipos.json",
+      "used_in": [],
+      "status": "active",
+      "notes": "Uso: {\"tipo\": \"policial\"} nos params; chaves explícitas sobrescrevem (pose, expressão, cores). Criança: head_scale 1.25 no preset; a escala ~0,72 é de quem posiciona. Operário é figurante cinza (npc 3) com capacete. Aprovado em 2026-11-05."
+    },
+    {
+      "id": "palco.objetos",
+      "name": "Objetos e móveis de cenário",
+      "style": "palco",
+      "type": "component",
+      "dimension": "2d",
+      "tags": [
+        "objeto",
+        "movel",
+        "mesa",
+        "cadeira",
+        "sofa",
+        "janela",
+        "porta",
+        "quadro",
+        "relogio",
+        "luminaria",
+        "lustre",
+        "xicara",
+        "telefone",
+        "maquina-de-escrever",
+        "escola",
+        "epoca"
+      ],
+      "params": {
+        "funcoes": [
+          "mesa_escritorio",
+          "cadeira_executivo",
+          "cadeira",
+          "sofa",
+          "mesa_toalha",
+          "mesa_jantar",
+          "estante",
+          "arquivo",
+          "cabideiro",
+          "porta",
+          "janela",
+          "quadro",
+          "relogio_parede",
+          "luminaria_pendente",
+          "lustre",
+          "luminaria_mesa",
+          "xicara",
+          "vapor",
+          "notebook",
+          "monitor",
+          "telefone_disco",
+          "maquina_escrever",
+          "livro_aberto",
+          "pilha_livros",
+          "papeis",
+          "carta",
+          "planta",
+          "globo",
+          "quadro_negro",
+          "carteira",
+          "charuto",
+          "giz"
+        ],
+        "convencao": "f(x, y, s, ...): (x, y) = centro da base (chão ou tampo); s = escala (personagem em pé tem 622 de altura); epoca=True troca pela versão 1900-1940 quando existe"
+      },
+      "path": "styles/palco/tools/cenarios/objetos.py",
+      "used_in": [],
+      "status": "active",
+      "notes": "Chapados, sem contorno, com sombra de contato (STYLE.md). Luminárias, lustre e luminária pendente são fontes de luz (desenhar em #sources). Relógio com ponteiros pela hora (t), xícara com vapor animado. cadeira_executivo: base=False quando fica atrás de mesa; cadeira lado=frente|perfil. Usados pelos cenários paramétricos (palco.gerador_cenarios). Aprovado em 2026-11-05."
     }
   ]
 }
