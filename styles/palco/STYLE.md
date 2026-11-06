@@ -42,6 +42,8 @@ Figuras chapadas montadas por camadas. A silhueta é a mesma para todos; variam 
 
 Cabeça circular, sem nariz, boca ou orelhas. Rosto só com olhos e sobrancelhas. Braços em duas peças (braço e antebraço) com pivôs no ombro e no cotovelo; as pontas arredondadas se sobrepõem no cotovelo, então a junção não aparece. Pernas inteiriças, girando só no quadril.
 
+**Sentado de frente** (`"sentado": true` ou a altura do assento; aprovado em 2026-11-06): coxas curtas e um pouco mais largas (vêm na direção da câmera) abrindo em "/ \" do quadril até os joelhos, que ficam na borda do assento e são marcados por uma elipse um tom mais clara; canelas descem até o chão, à frente do assento. Quem senta sem nada na frente (sofá, banco) é desenhado inteiro, depois do assento; o recorte abaixo do tampo continua valendo só para quem está atrás de mesa ou balcão.
+
 ### Proporções (H = diâmetro da cabeça)
 
 | Parte | Medida |

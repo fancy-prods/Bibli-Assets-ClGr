@@ -68,6 +68,7 @@
           "color": "#hex"
         },
         "head_scale": "0.7..1.5 (default 1; criança 1.25 com escala ~0.72)",
+        "sentado": "true | altura do assento em unidades do personagem (quadril -> chão; true = 174, sofá padrão): pernas de quem senta de frente (coxas curtas em \"/ \\\", joelhos na borda do assento). Aprovado em 2026-11-06 (amigos1). Sem recorte: desenhar depois do assento",
         "tipo": "preset de presets/tipos.json (ver palco.presets_tipos)"
       },
       "path": "styles/palco/tools/compose_character.py",

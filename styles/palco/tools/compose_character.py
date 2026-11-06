@@ -254,6 +254,11 @@ def resolve_params(raw: dict) -> dict:
     p["mustache"] = opt("mustache", "cheio")
     # proporção da cabeça (criança: escala do personagem ~0.72 com head_scale 1.25 = cabeça 0.9)
     p["head_scale"] = clamp(float(raw.get("head_scale", 1.0)), 0.7, 1.5)
+    # sentado de frente (aprovado em 2026-11-06, variante "aberta"): coxas curtas abrindo em "/ \" até os joelhos
+    # na borda do assento, canelas até o chão. True usa o sofá padrão (quadril 174 acima do chão); um número dá a
+    # altura do assento (quadril -> chão) em unidades do personagem.
+    sent = raw.get("sentado")
+    p["sentado"] = None if not sent else (174.0 if sent is True else float(sent))
     if p["hat"] and p["hat"]["style"] not in HATS:
         raise SystemExit(f"chapéu desconhecido: {p['hat']['style']!r} (use {list(HATS)})")
     if p["mustache"] and p["mustache"]["style"] not in MUSTACHES:
@@ -609,7 +614,40 @@ def load_hair(style: str) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------- montagem
+def seated_legs(p: dict) -> tuple[str, str]:
+    """Pernas de quem está sentado de frente: canelas atrás, coxas encurtadas por cima, joelhos arredondados."""
+    cx, hip = 340, 375
+    alt = p["sentado"]
+    chao = hip + alt + 19                 # o pé fica um pouco à frente do assento (mais perto da câmera)
+    queda = 66 * alt / 174                # coxa encurtada: joelho na borda do assento
+    ky = hip + queda
+    cw, kx, sw, pe, pe_x = 44, 62, 32, 24, 50
+    pants, knee = p["pants"], shade_hex(p["pants"], 0.08)
+    out = []
+    for side in (-1, 1):
+        k, px = cx + side * kx, cx + side * pe_x
+        out.append(f'<path d="M{f(k - sw / 2)} {f(ky)} L{f(px - sw / 2 + 2)} {f(chao)} L{f(px + sw / 2 - 2)} {f(chao)} '
+                   f'L{f(k + sw / 2)} {f(ky)} Z" fill="{pants}"/>')
+    for side in (-1, 1):
+        hx0, hx1 = (304, 336) if side < 0 else (344, 376)
+        k = cx + side * kx
+        out.append(f'<path d="M{hx0} {hip - 6} L{hx1} {hip - 6} L{f(k + cw / 2)} {f(ky)} L{f(k - cw / 2)} {f(ky)} Z" fill="{pants}"/>')
+        out.append(f'<ellipse cx="{f(k)}" cy="{f(ky)}" rx="{f(cw / 2)}" ry="{f(cw * 0.36)}" fill="{knee}"/>')
+    shoes = "".join(f'<ellipse cx="{f(cx + side * pe_x)}" cy="{f(chao + 4)}" rx="{pe}" ry="{f(pe * 0.42)}" fill="{p["shoes"]}"/>'
+                    for side in (-1, 1))
+    return f'<g class="legs">{"".join(out)}</g>', f'<g class="shoes">{shoes}</g>'
+
+
 def body_parts(p: dict) -> dict:
+    if p.get("sentado"):
+        legs, shoes = seated_legs(p)
+        bp = _standing_parts(p)
+        bp["legs"], bp["shoes"] = legs, shoes
+        return bp
+    return _standing_parts(p)
+
+
+def _standing_parts(p: dict) -> dict:
     return {
         "legs": (
             f'<g class="legs"><rect x="304" y="375" width="32" height="235" rx="5" fill="{p["pants"]}"/>'
