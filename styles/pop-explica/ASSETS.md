@@ -1,6 +1,12 @@
 # Assets do Pop Explica — o que o Grok entrega
 
 Tudo vai em `videos/<slug>/assets/`, mais o arquivo `videos/<slug>/produto.md`.
+
+**Origem no Drive:** o Grok deixa o material de cada produto em uma subpasta de
+https://drive.google.com/drive/u/2/folders/1W2me8e97X9BJGQFehNAQV8-Xlst1i7aR
+(`<Produto>/imagens/`, `<Produto>/videos/`, `sources.txt`). Os nomes vêm numerados
+(ex.: `02_packshot_tubo_caixa_fundo_transparente.png`): escolher os arquivos e copiar para `assets/`
+com os nomes abaixo. Binários não entram no Git além do que o AGENTS.md manda commitar.
 A ilustração (personagens, cenários, ícones) é desenhada em código; o Grok não precisa buscar desenhos.
 
 ## Obrigatório
