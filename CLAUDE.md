@@ -36,7 +36,7 @@ Um asset não reusado em 15 vídeos vai para `/archive/`: sai do catálogo ativo
 
 ## 6. Binários pesados
 
-PNG grandes e vídeos não entram no Git. Ficam no Drive, com o link registrado no catálogo (campo `path` com a URL, ou em `notes`). O `.gitignore` bloqueia as extensões mais comuns.
+PNG grandes e vídeos não entram no Git. Ficam no Drive, com o link registrado no catálogo (campo `path` com a URL, ou em `notes`). O `.gitignore` bloqueia as extensões mais comuns. Exceção: `styles/pop-explica/videos/` versiona PNG/JPG/MP4/MP3 dos vídeos (as sessões na web entregam por commit); ver o `.gitignore` do estilo.
 
 ## 7. Esquema de cada entrada do catálogo
 

@@ -5,3 +5,10 @@ st_*.png
 examples/*.mp4
 videos/*/out/*
 !videos/*/out/*.mp4
+# Exceção aprovada pelo Arthur (2026-11-11): as saídas dos vídeos entram no Git,
+# porque as sessões na web entregam por commit (AGENTS.md, passo 8).
+!videos/**/*.png
+!videos/**/*.jpg
+!videos/**/*.jpeg
+!videos/**/*.mp4
+!videos/**/*.mp3
