@@ -3,7 +3,7 @@
 Só depende de pycairo, Pillow, numpy e ffmpeg. Roda igual no Claude e no Codex.
 Tudo é função pura de t (segundos): nenhuma cena guarda estado entre frames.
 """
-import math, os, random, subprocess, json
+import math, os, random, re, subprocess, json
 import cairo
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -24,7 +24,7 @@ THEMES = {
 }
 INK = "#1b1015"           # contorno de texto e traço dos desenhos
 HL = {"yellow": "#ffd23f", "green": "#7be05a", "red": "#ff5a5f",
-      "blue": "#4fc3ff", "orange": "#ff9a3c", "pink": "#ff7eb6", "white": "#ffffff"}
+      "blue": "#4fc3ff", "orange": "#ff9a3c", "pink": "#ff7eb6", "purple": "#b77bff", "white": "#ffffff"}
 
 
 def hex2rgb(h):
@@ -192,7 +192,7 @@ class Captions:
     """
 
     def __init__(self, words, y=300, size=104, max_words=3, max_w=960, default_hl="yellow"):
-        self.y, self.size, self.default_hl = y, size, default_hl
+        self.y, self.size, self.default_hl, self.max_w = y, size, default_hl, max_w
         self.phrases = []
         cur = []
         for i, w in enumerate(words):
@@ -213,10 +213,13 @@ class Captions:
         f = font(self.size)
         space = f.getlength(" ") * 0.9 + 2 * 11   # + contorno dos dois lados
         adv = [f.getlength(self._clean(w)) for w in ph]
-        x = W / 2 - (sum(adv) + space * (len(ph) - 1)) / 2
+        total = sum(adv) + space * (len(ph) - 1)
+        k = min(1.0, self.max_w / total)          # palavra sozinha larga demais: reduz em vez de sair da tela
+        x = W / 2 - total / 2
         for w, a in zip(ph, adv):
             spr = text_sprite(self._clean(w), self.size)
-            w["_cx"] = x - spr[3] + spr[1] / 2   # centro do sprite com a origem do texto em x
+            cx = x - spr[3] + spr[1] / 2   # centro do sprite com a origem do texto em x
+            w["_cx"], w["_k"] = W / 2 + (cx - W / 2) * k, k
             x += a + space
 
     def draw(self, ctx, t):
@@ -228,7 +231,7 @@ class Captions:
             for j, w in enumerate(ph):
                 if t < w["s"]: continue
                 col = HL[w.get("c", self.default_hl)] if j == active else "#ffffff"
-                sc = pop(t, w["s"], 0.22)
+                sc = pop(t, w["s"], 0.22) * w.get("_k", 1.0)
                 blit(ctx, text_sprite(self._clean(w), self.size, col), w["_cx"], self.y, sc)
 
 
@@ -498,20 +501,21 @@ def words_from_align(path):
 
 # ---------------------------------------------------------------- timeline de cenas
 def timeline(ctx, t, scenes, d=0.42):
-    """scenes: lista ordenada de dicts {"t": início, "theme": "red", "draw": fn(ctx, t), "origin": (x,y)?}.
+    """scenes: lista ordenada de dicts {"t": início, "theme": "red", "draw": fn(ctx, t), "origin": (x,y)?, "d": s?}.
     Cada cena nova abre com íris por cima da anterior (fundo + elementos), então elementos da cena
-    velha somem naturalmente sob o círculo. A primeira cena não tem transição."""
+    velha somem naturalmente sob o círculo. A primeira cena não tem transição.
+    "d": duração da íris só daquela cena; "d": 0 = corte seco (ex.: escondido por um flash branco)."""
     live = [s for s in scenes if s["t"] <= t]
     if not live: return
     # cena-base = última cuja íris já terminou
     base = 0
     for i, s in enumerate(live):
-        if i == 0 or t >= s["t"] + d: base = i
+        if i == 0 or t >= s["t"] + s.get("d", d): base = i
     s = live[base]
     background(ctx, s["theme"], t, seed=base + 1); s["draw"](ctx, t)
     for j in range(base + 1, len(live)):
         s = live[j]; o = s.get("origin", (540, 1060))
-        p = ease_in_out(prog(t, s["t"], d)); r = p * math.hypot(W, H)
+        p = ease_in_out(prog(t, s["t"], s.get("d", d))); r = p * math.hypot(W, H)
         ctx.save(); ctx.arc(*o, r, 0, 2 * math.pi); ctx.clip()
         background(ctx, s["theme"], t, seed=j + 1); s["draw"](ctx, t); ctx.restore()
         ctx.set_line_width(26 * (1 - p) + 6); ctx.set_source_rgba(1, 1, 1, 0.9 * (1 - p * 0.6))
@@ -613,7 +617,7 @@ def render_parallel(module_path, duration, out_mp4, audio=None, fn_name="frame",
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst]
     if audio:
         cmd += ["-i", audio, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
-                "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "192k", "-shortest"]
+                "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", "-shortest"]
     else:
         cmd += ["-c", "copy"]
     subprocess.run(cmd + [out_mp4], check=True)
@@ -637,7 +641,17 @@ def storyboard(frame, duration, path, n=12, times=None, cols=6, scale=0.25):
     sheet.save(path); return path
 
 
+def _duration_ffmpeg(path):
+    """Sem ffprobe (ex.: ffmpeg avulso no Windows): lê a linha 'Duration:' do ffmpeg -i."""
+    err = subprocess.run(["ffmpeg", "-hide_banner", "-i", path], capture_output=True, text=True).stderr
+    h, m, s = re.search(r"Duration: (\d+):(\d+):([\d.]+)", err).groups()
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
 def audio_duration(path):
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
-                         capture_output=True, text=True).stdout
-    return float(out.strip())
+    try:
+        out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                             capture_output=True, text=True).stdout
+        return float(out.strip())
+    except (FileNotFoundError, ValueError):
+        return _duration_ffmpeg(path)

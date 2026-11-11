@@ -31,9 +31,19 @@ def whisper_words(path):
     return [(w.word.strip(), w.start, w.end) for s in segs for w in s.words if w.word.strip()]
 
 
+def _duration_ffmpeg(path):
+    """Sem ffprobe (ex.: ffmpeg avulso no Windows): lê a linha 'Duration:' do ffmpeg -i."""
+    err = subprocess.run(["ffmpeg", "-hide_banner", "-i", path], capture_output=True, text=True).stderr
+    h, m, s = re.search(r"Duration: (\d+):(\d+):([\d.]+)", err).groups()
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
 def duration(path):
-    return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
-                                capture_output=True, text=True).stdout)
+    try:
+        return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                                    capture_output=True, text=True).stdout)
+    except (FileNotFoundError, ValueError):
+        return _duration_ffmpeg(path)
 
 
 def fallback(path, words):

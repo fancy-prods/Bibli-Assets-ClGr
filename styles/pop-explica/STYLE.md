@@ -66,7 +66,7 @@ Depois do hook, a virada clássica continua valendo: "Não é [causa óbvia], n�
 | teal | #5fc2b4 | #196963 | suavidade |
 | purple | #b49ee8 | #3a227a | solução premium |
 
-Destaques de legenda: yellow #ffd23f (padrão), green, red, blue, orange, pink. Contorno: #1b1015.
+Destaques de legenda: yellow #ffd23f (padrão), green, red, blue, orange, pink, purple #b77bff. Contorno: #1b1015.
 Cor de destaque é semântica: "chá" verde, "refrigerante" vermelho, "esmalte" azul. Sem tag = amarelo.
 
 ## 5. Fundo
@@ -111,6 +111,9 @@ Elementos entram ancorados na palavra da narração que os nomeia (`T("palavra")
 `background`, `timeline` (cenas + íris), `Captions`, `pill`, `checklist`, `progress_bar`, `seal`,
 `product`, `sparkles`, `glow`, `cta`, `tooth` (personagem-exemplo), `eyes_pair`, `ground_shadow`,
 `clip_card`, `clip_full`, `Clip`, `soft_shadow`, `text_sprite`, `blit`, `pop`, `prog`, easings, `render`, `still`, `words_from_align`.
+`timeline` aceita `"d"` por cena (`"d": 0` = corte seco, ex.: escondido por flash branco). A legenda reduz uma palavra
+sozinha que passaria da largura. Sem `ffprobe`, a duração vem do `ffmpeg`. Ilustrações prontas no `video.py` do
+toyadent (ainda não promovidas): roleta de caça-níquel, círculo cromático RYB, TV retrô com vídeo real, respingo de tinta.
 Faltam (criar quando o roteiro pedir, e adicionar ao `popx.py` como componente genérico):
 corte transversal de pele, placar "AO VIVO", calendário "DIA 67", círculo cromático com rótulos,
 passos numerados (badge verde com número), placa "PARA!".
