@@ -9,6 +9,9 @@ Leia também, nesta ordem: `STYLE.md` (regras visuais, hooks, alegações) e a p
 
 ## Mapa
 
+A pasta do estilo é `styles/pop-explica/` na biblioteca. Os caminhos abaixo são relativos a ela: rode os comandos de dentro dessa pasta.
+
+
 | Caminho | O quê |
 |---|---|
 | `engine/popx.py` | Motor: fundo, legenda, transições, componentes, render. Ver índice em STYLE.md §9 |
@@ -24,7 +27,7 @@ Leia também, nesta ordem: `STYLE.md` (regras visuais, hooks, alegações) e a p
 ## Setup (uma vez por sessão)
 
 ```
-bash pop-explica/setup.sh
+bash styles/pop-explica/setup.sh
 ```
 
 ## Tarefa A — escrever o roteiro (`roteiro.md`)

@@ -6,7 +6,7 @@ Este repositório é a biblioteca de assets reutilizáveis para vídeos animados
 
 - Cada estilo tem pasta própria em `/styles/<estilo>/`, com `STYLE.md` e `catalog.json` próprios.
 - Em cada vídeo, consulte **apenas** o catálogo do estilo do vídeo atual, mais `/shared/catalog.json`.
-- Estilos atuais: `palco` (v1 ativo) e `desenho-na-tela` (placeholder, guia ainda não escrito).
+- Estilos atuais: `palco` (v1 ativo), `pop-explica` (vídeos de produto para TikTok Shop; motor próprio e fluxo em `styles/pop-explica/AGENTS.md`) e `desenho-na-tela` (placeholder, guia ainda não escrito).
 
 ## 2. Assets não migram entre estilos; são redesenhados
 

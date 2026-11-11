@@ -6,6 +6,7 @@ Assets reutilizáveis para vídeos animados gerados com o Claude, organizados po
 - **Compartilhado entre estilos:** [`shared/`](shared/) ([catálogo](shared/catalog.json)): técnica de iluminação.
 - **Estilos:**
   - [`styles/palco/`](styles/palco/) (v1): [guia](styles/palco/STYLE.md), [catálogo](styles/palco/catalog.json), montador paramétrico de personagem e animação ociosa (frames SVG).
+  - [`styles/pop-explica/`](styles/pop-explica/): [guia](styles/pop-explica/STYLE.md), [catálogo](styles/pop-explica/catalog.json), [agentes](styles/pop-explica/AGENTS.md); vídeos de produto (TikTok Shop) com motor pycairo próprio.
   - [`styles/desenho-na-tela/`](styles/desenho-na-tela/): placeholder.
 - **Arquivados:** [`archive/`](archive/)
 

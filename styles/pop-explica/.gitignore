@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+render.log
+st_*.png
+examples/*.mp4
+videos/*/out/*
+!videos/*/out/*.mp4
