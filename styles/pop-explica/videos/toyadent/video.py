@@ -228,29 +228,112 @@ def slot_machine(ctx, t, cx, cy, k):
     ctx.restore()
 
 
+# ---------------------------------------------------------------- personagem do hook: sorriso amarelado
+SKIN, SKIN_DK, HAIR_DK = "#f2c6a0", "#e0a982", "#4a2c1d"
+TEETH_Y, STAIN = "#e2bd3e", "#b98a1c"
+
+
+def grin_person(ctx, t, cx, cy, s, surprise=0.0):
+    """Pessoa sorrindo de dentes à mostra (bem amarelos), sobrancelhas preocupadas, gotinha de suor.
+    surprise 0..1: olhos arregalados e boca abrindo (reação ao "roxo?")."""
+    if s <= 0.01: return
+    bob = 6 * math.sin(t * 3.0)
+    ground_shadow(ctx, cx, cy + 430 * s, 240 * s, a=0.22)
+    ctx.save(); ctx.translate(cx, cy + bob * s); ctx.scale(s, s)
+    # ombros e pescoço
+    ctx.move_to(-260, 430); ctx.curve_to(-260, 270, -170, 215, 0, 215); ctx.curve_to(170, 215, 260, 270, 260, 430)
+    ctx.close_path(); fill(ctx, "#4fa3e0"); ctx.fill_preserve(); stroke_ink(ctx, 9)
+    rrect(ctx, -55, 150, 110, 100, 30); fill(ctx, SKIN_DK); ctx.fill_preserve(); stroke_ink(ctx, 8)
+    # orelhas, cabeça
+    for sgn in (-1, 1):
+        ctx.arc(sgn * 192, 10, 40, 0, 6.28); fill(ctx, SKIN); ctx.fill_preserve(); stroke_ink(ctx, 8)
+    ctx.save(); ctx.scale(1, 1.06); ctx.arc(0, 0, 200, 0, 6.28); ctx.restore()
+    fill(ctx, SKIN); ctx.fill_preserve(); stroke_ink(ctx, 9)
+    # cabelo curto
+    ctx.move_to(-198, -30); ctx.curve_to(-215, -200, -90, -255, 10, -238)
+    ctx.curve_to(130, -250, 225, -170, 198, -30)
+    ctx.curve_to(170, -110, 120, -150, 60, -140); ctx.curve_to(10, -175, -70, -150, -110, -120)
+    ctx.curve_to(-150, -110, -180, -80, -198, -30); ctx.close_path()
+    fill(ctx, HAIR_DK); ctx.fill_preserve(); stroke_ink(ctx, 9)
+    ctx.move_to(-60, -215); ctx.curve_to(0, -232, 70, -228, 120, -200); ctx.set_line_width(12); ctx.set_source_rgba(1, 1, 1, .25); ctx.stroke()
+    # sobrancelhas preocupadas (sobem no meio)
+    for sgn in (-1, 1):
+        lift = 18 * surprise
+        ctx.move_to(sgn * 120, -78 - lift * 0.5); ctx.line_to(sgn * 40, -100 - lift); stroke_ink(ctx, 11)
+    # olhos
+    for sgn in (-1, 1):
+        ex = sgn * 75
+        if surprise > 0.05:
+            ctx.arc(ex, -40, 18 + 16 * surprise, 0, 6.28); fill(ctx, "#ffffff"); ctx.fill_preserve(); stroke_ink(ctx, 6)
+            ctx.arc(ex, -38, 11, 0, 6.28); fill(ctx, "#2b1a12"); ctx.fill()
+            ctx.arc(ex + 4, -43, 4, 0, 6.28); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+        else:
+            ctx.arc(ex, -40, 15, 0, 6.28); fill(ctx, "#2b1a12"); ctx.fill()
+            ctx.arc(ex + 5, -45, 5, 0, 6.28); ctx.set_source_rgb(1, 1, 1); ctx.fill()
+        ctx.save(); ctx.translate(sgn * 120, 30); ctx.scale(1, .6); ctx.arc(0, 0, 26, 0, 6.28)
+        ctx.set_source_rgba(1, .45, .5, .45); ctx.fill(); ctx.restore()
+    # boca: sorriso largo de dentes amarelos
+    mw, top, bot = 112, 58, 150 + 25 * surprise
+
+    def mouth():
+        ctx.move_to(-mw, top); ctx.curve_to(-mw * 0.5, top + 10, mw * 0.5, top + 10, mw, top)
+        ctx.curve_to(mw * 0.9, bot, -mw * 0.9, bot, -mw, top); ctx.close_path()
+    mouth(); fill(ctx, "#6e1a26"); ctx.fill()
+    ctx.save(); mouth(); ctx.clip()
+    ctx.save(); ctx.translate(0, bot + 5); ctx.scale(1.6, 1); ctx.arc(0, 0, 45, 0, 6.28); ctx.restore()
+    fill(ctx, "#e8606f"); ctx.fill()                                    # língua
+    rrect(ctx, -mw, top - 6, 2 * mw, 22, 8); fill(ctx, "#e98a96"); ctx.fill()   # gengiva
+    tw = 2 * mw / 6
+    for i in range(6):                                                  # dentes de cima
+        x0 = -mw + i * tw
+        h = 46 if 1 <= i <= 4 else 38
+        rrect(ctx, x0 + 2, top + 8, tw - 4, h, 9); fill(ctx, TEETH_Y); ctx.fill_preserve()
+        ctx.set_line_width(4); fill(ctx, "#8a6414"); ctx.stroke()
+        ctx.save(); ctx.translate(x0 + tw / 2, top + 16); ctx.scale(1, .55); ctx.arc(0, 0, tw * 0.3, 0, 6.28)
+        fill(ctx, STAIN, .55); ctx.fill(); ctx.restore()                 # mancha perto da gengiva
+        ctx.arc(x0 + tw * 0.32, top + 30, 4, 0, 6.28); ctx.set_source_rgba(1, 1, 1, .45); ctx.fill()
+    for i in range(5):                                                  # dentes de baixo
+        x0 = -mw * 0.8 + i * (1.6 * mw / 5)
+        rrect(ctx, x0 + 2, bot - 34, 1.6 * mw / 5 - 4, 34, 8); fill(ctx, TEETH_Y); ctx.fill_preserve()
+        ctx.set_line_width(4); fill(ctx, "#8a6414"); ctx.stroke()
+    ctx.restore()
+    mouth(); stroke_ink(ctx, 8)
+    # gotinha de suor
+    ctx.move_to(170, -140); ctx.curve_to(184, -110, 200, -100, 184, -84); ctx.curve_to(166, -84, 160, -110, 170, -140)
+    fill(ctx, "#7fd0ff"); ctx.fill_preserve(); stroke_ink(ctx, 5)
+    ctx.restore()
+
+
 # ---------------------------------------------------------------- cena 1: hook (dor + quebra)
 def hook(ctx, t):
     punch = 1 + 0.07 * math.exp(-max(0, t - T_ROXO) * 7) if t >= T_ROXO else 1.0
     ctx.save(); ctx.translate(540, 1000); ctx.scale(punch, punch); ctx.translate(-540, -1000)
-    # dente: centro -> embaixo quando a roleta entra
-    m = ease_in_out(prog(t, T_FALTA2 - 0.3, 0.35))
-    tx, ty, ts = 540, 1080 + 440 * m, 1.2 - 0.6 * m
-    tooth(ctx, t, tx, ty, ts, mood="sad", dirt=0.85)
-    if t >= T_ROXO: surprised_eyes(ctx, t, tx, ty, ts, pop(t, T_ROXO, 0.2))
-    # escova esfregando, X em "escovar", sai voando
+    # personagem: push-in na boca em "amarelado", depois desce e encolhe quando a roleta entra
+    zin = ease_in_out(prog(t, T_AMAR - 0.25, 0.4)) * (1 - ease_in_out(prog(t, T_ESC - 0.1, 0.3)))
+    m = ease_in_out(prog(t, T_FALTA2 - 0.7, 0.35))      # desce antes de a roleta entrar
+    px, py, ps = 540, 1060 - 120 * zin + 470 * m, 1.15 + 0.4 * zin - 0.6 * m
+    grin_person(ctx, t, px, py, ps, surprise=pop(t, T_ROXO, 0.2) if t >= T_ROXO else 0.0)
+    mouth_y = py + 100 * ps
+    # escova esfregando os dentes, depois sai de lado, X em "escovar" e voa
     if 0.1 <= t < T_ESC + 0.8:
         k_in = pop(t, 0.1, 0.25)
+        aside = ease_in_out(prog(t, T_AMAR - 0.35, 0.3))
         fly = prog(t, T_ESC + 0.3, 0.45)
-        bx = 540 + 110 * math.sin(t * 17) * (1 - fly) + 700 * ease_in_out(fly)
-        by = 1120 - 600 * ease_in_out(fly)
-        toothbrush(ctx, bx, by, rot=-0.15 + 1.2 * fly, s=k_in, alpha=1 - fly)
+        bx = px - 20 + 70 * math.sin(t * 17) * (1 - aside) + 330 * aside + 600 * ease_in_out(fly)
+        by = mouth_y + 230 * aside - 700 * ease_in_out(fly)
+        toothbrush(ctx, bx, by, rot=-0.15 - 0.5 * aside + 1.2 * fly, s=k_in * (1 - 0.25 * aside), alpha=1 - fly)
         if t >= T_ESC:
-            red_x(ctx, 560, 1100 - 600 * ease_in_out(fly), pop(t, T_ESC, 0.22) * (1 - fly))
-    # pílula "AMARELADO" tremendo
-    pk = out_k(t, T_FALTA2 - 0.45, 0.2)
+            red_x(ctx, bx + 60, by - 20, pop(t, T_ESC, 0.22) * (1 - fly))
+    # pílula "AMARELADO" com seta para os dentes
+    pk = out_k(t, T_FALTA2 - 0.85, 0.2)              # sai antes de o personagem descer
     if t >= T_AMAR and pk > 0:
         sh = 9 * math.sin(t * 45) * math.exp(-(t - T_AMAR) * 3)
-        scaled(ctx, 540, 1500, pk, lambda: pill(ctx, t, T_AMAR, 540 + sh, 1500, "AMARELADO", bg="#ffd23f", fg=INK, size=48))
+        def lbl():
+            k = pop(t, T_AMAR, 0.28)
+            ctx.move_to(540 + sh - 26, 1478); ctx.line_to(540 + sh, 1478 - 40 * k); ctx.line_to(540 + sh + 26, 1478)
+            ctx.close_path(); fill(ctx, "#ffd23f"); ctx.fill_preserve(); stroke_ink(ctx, 6)
+            pill(ctx, t, T_AMAR, 540 + sh, 1520, "AMARELADO", bg="#ffd23f", fg=INK, size=48)
+        scaled(ctx, 540, 1520, pk, lbl)
     # roleta
     if t >= T_FALTA2 - 0.35:
         slot_machine(ctx, t, 540, 930, pop(t, T_FALTA2 - 0.35, 0.3))
@@ -656,6 +739,12 @@ if __name__ == "__main__":
     if mode == "stills":
         times = [float(x) for x in sys.argv[2:]] or None
         print(storyboard(frame, DUR, os.path.join(VDIR, "storyboard.jpg"), times=times))
+    elif mode == "preview":                 # python video.py preview 7.2  -> out/preview.mp4 (0 até o segundo pedido)
+        low_priority()
+        write_wav(MIX, build_audio())
+        os.makedirs(os.path.join(VDIR, "out"), exist_ok=True)
+        out = os.path.join(VDIR, "out", "preview.mp4")
+        render(frame, float(sys.argv[2]) if len(sys.argv) > 2 else 7.2, out, audio=MIX); print(out)
     elif mode == "audio":
         write_wav(MIX, build_audio(report=True)); print(MIX)
     elif mode == "render":
