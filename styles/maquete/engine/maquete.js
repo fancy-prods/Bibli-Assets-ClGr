@@ -80,8 +80,8 @@ export function planta(s = 1) { const g = new THREE.Group(); g.add(cyl(0.2, 0.15
 export function tapete(r, color = PAL.creme, color2 = PAL.coral) { const g = new THREE.Group(); const a = cyl(r, r, 0.03, color, { seg: 48 }); a.castShadow = false; g.add(a); const b = new THREE.Mesh(new THREE.RingGeometry(r * 0.72, r * 0.82, 48), mat(color2)); b.rotation.x = -Math.PI / 2; b.position.y = 0.032; b.receiveShadow = true; g.add(b); const c = new THREE.Mesh(new THREE.RingGeometry(r * 0.3, r * 0.36, 48), mat(color2)); c.rotation.x = -Math.PI / 2; c.position.y = 0.032; c.receiveShadow = true; g.add(c); return g; }
 export function quadro(w, h, color, art = PAL.mostarda) { const g = new THREE.Group(); g.add(box(w, h, 0.05, PAL.madeira2, { r: 0.012 })); const a = box(w - 0.12, h - 0.12, 0.02, PAL.creme, { r: 0.004, y: 0.06, z: 0.02 }); g.add(a); const c = ball(Math.min(w, h) * 0.2, art, { y: h * 0.55, z: 0.03 }); c.scale.z = 0.12; g.add(c); g.add(box(w * 0.5, h * 0.18, 0.02, color, { r: 0.004, y: 0.12, z: 0.03 })); return g; }
 /* janela na parede (moldura + vidro emissivo) e a mancha de luz que ela joga no piso */
-export function janela(w, h) { const g = new THREE.Group(); g.add(box(w + 0.16, h + 0.16, 0.08, PAL.creme, { r: 0.02 })); const pane = box(w, h, 0.04, '#bfe6f2', { r: 0.005, y: 0.08, z: 0.03, opts: { emissive: '#fff1c4', ei: 0.9, rough: 0.4 } }); pane.castShadow = false; g.add(pane); g.add(box(0.05, h, 0.06, PAL.creme, { r: 0.01, y: 0.08, z: 0.04 })); g.add(box(w, 0.05, 0.06, PAL.creme, { r: 0.01, y: 0.08 + h / 2 - 0.025, z: 0.04 })); g.add(box(w + 0.3, 0.06, 0.2, PAL.creme, { r: 0.02, y: -0.02, z: 0.08 })); return g; }
-export function manchaDeLuz(w, d, skew = 0.6, color = '#fff0c0', a = 0.5) { const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(w / 2 + skew, d); s.lineTo(-w / 2 + skew, d); const m = new THREE.Mesh(new THREE.ShapeGeometry(s), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: a, blending: THREE.AdditiveBlending, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.y = 0.045; m.userData.a = a; return m; }
+export function janela(w, h) { const g = new THREE.Group(); g.add(box(w + 0.16, h + 0.16, 0.08, PAL.creme, { r: 0.02 })); const pane = box(w, h, 0.04, '#9fd4ee', { r: 0.005, y: 0.08, z: 0.03, opts: { emissive: '#8fd0f5', ei: 0.75, rough: 0.4 } }); pane.castShadow = false; g.add(pane); g.add(box(0.05, h, 0.06, PAL.creme, { r: 0.01, y: 0.08, z: 0.04 })); g.add(box(w, 0.05, 0.06, PAL.creme, { r: 0.01, y: 0.08 + h / 2 - 0.025, z: 0.04 })); g.add(box(w + 0.3, 0.06, 0.2, PAL.creme, { r: 0.02, y: -0.02, z: 0.08 })); return g; }
+export function manchaDeLuz(w, d, skew = 0.6, color = '#ffd98a', a = 0.42) { const s = new THREE.Shape(); s.moveTo(-w / 2, 0); s.lineTo(w / 2, 0); s.lineTo(w / 2 + skew, d); s.lineTo(-w / 2 + skew, d); const m = new THREE.Mesh(new THREE.ShapeGeometry(s), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: a, blending: THREE.AdditiveBlending, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.position.y = 0.045; m.userData.a = a; return m; }
 /* sala em corte: base, piso de tábuas e duas paredes de fundo (x = -L/2 e z = -L/2) */
 export function sala(L = 6, hWall = 3.1, { piso = [PAL.piso, PAL.piso2], parede = PAL.parede, base = PAL.base } = {}) {
   const g = new THREE.Group(); g.add(box(L + 0.5, 0.45, L + 0.5, base, { r: 0.08, y: -0.5 }));
@@ -112,18 +112,19 @@ export function createStage(view, { W = K.W, H = K.H, span = 9.4, target = [0, 1
   view.width = W; view.height = H; const out = view.getContext('2d');
   const glc = document.createElement('canvas'); glc.width = W; glc.height = H;
   const renderer = new THREE.WebGLRenderer({ canvas: glc, antialias: true, alpha: true, preserveDrawingBuffer: true });
-  renderer.setSize(W, H, false); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.08; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.setClearColor(0x000000, 0);
+  renderer.setSize(W, H, false); renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0; renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene(), root = new THREE.Group(); scene.add(root);
   const asp = W / H, camera = new THREE.OrthographicCamera(-span * asp / 2, span * asp / 2, span / 2, -span / 2, 0.1, 100);
   camera.position.set(target[0] + 12, target[1] + 12 * Math.tan(THREE.MathUtils.degToRad(33)) * Math.SQRT2, target[2] + 12); camera.lookAt(...target);
-  scene.add(new THREE.HemisphereLight('#fff4e6', '#c98f78', 1.15));
-  const key = new THREE.DirectionalLight('#fff0dc', 2.3); key.position.set(4.5, 11, 9.5); key.castShadow = true; key.shadow.mapSize.set(shadow, shadow); const sc = key.shadow.camera; sc.left = -7; sc.right = 7; sc.top = 7; sc.bottom = -7; sc.near = 1; sc.far = 40; key.shadow.radius = 5; key.shadow.blurSamples = 16; key.shadow.bias = -0.0006; key.shadow.normalBias = 0.03; scene.add(key);
-  const fill = new THREE.DirectionalLight('#bcd4ff', 0.5); fill.position.set(-8, 5, 6); scene.add(fill);
+  scene.add(new THREE.HemisphereLight('#fff1e0', '#b9806e', 0.82));
+  const key = new THREE.DirectionalLight('#ffeed6', 2.9); key.position.set(8, 10.5, 3.2); key.castShadow = true; key.shadow.mapSize.set(shadow, shadow); const sc = key.shadow.camera; sc.left = -7; sc.right = 7; sc.top = 7; sc.bottom = -7; sc.near = 1; sc.far = 40; key.shadow.radius = 5; key.shadow.blurSamples = 16; key.shadow.bias = -0.0006; key.shadow.normalBias = 0.03; scene.add(key);
+  const fill = new THREE.DirectionalLight('#c4d6ff', 0.55); fill.position.set(-3, 5, 9); scene.add(fill);
   // texturas 2D do compositor
   const blurC = K.canvas(W, H), bx = blurC.getContext('2d'), maskC = K.canvas(W, H), mx = maskC.getContext('2d');
   const grainC = K.canvas(W / 2, H / 2); { const x = grainC.getContext('2d'), id = x.createImageData(W / 2, H / 2), d = id.data, r = K.rng(4); for (let i = 0; i < d.length; i += 4) { const v = r(); d[i] = d[i + 1] = d[i + 2] = v > 0.5 ? 255 : 0; d[i + 3] = Math.abs(v - 0.5) * 34; } x.putImageData(id, 0, 0); }
-  function render(t, { overlay = null, focusY = 0.56, band = 0.2, blur = 7, under = null } = {}) {
-    renderer.render(scene, camera);
+  const span0 = span;
+  function render(t, { zoom = 1, overlay = null, focusY = 0.56, band = 0.2, blur = 7, under = null } = {}) {
+    camera.zoom = zoom; camera.updateProjectionMatrix(); renderer.render(scene, camera);
     out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.filter = 'none';
     const bg = out.createRadialGradient(W * 0.5, H * 0.52, 80, W * 0.5, H * 0.52, W * 0.72); bg.addColorStop(0, fundo[0]); bg.addColorStop(1, fundo[1]); out.fillStyle = bg; out.fillRect(0, 0, W, H);
     if (under) under(out, t);

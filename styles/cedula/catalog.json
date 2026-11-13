@@ -1,0 +1,76 @@
+{
+  "style": "cedula",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "cedula.gravador",
+      "name": "Gravador de talho-doce (tom de cinza -> linhas gravadas, WebGL) e palco da nota",
+      "style": "cedula",
+      "type": "module",
+      "dimension": "2d",
+      "tags": ["gravura", "talho-doce", "hachura", "shader", "papel-moeda", "camera"],
+      "params": {
+        "print": "ink, period 6.4, angle -0.12, depth 26, wave 2.2, cross 1, gain 0..1, blur 9",
+        "cam": "{x, y, zoom}",
+        "finish": "sweep 0..1 (brilho que varre)"
+      },
+      "path": "styles/cedula/engine/cedula.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. Aceita qualquer imagem em tons de cinza. Depende de shared/web/kit.js."
+    },
+    {
+      "id": "cedula.guilhoche",
+      "name": "Guilhochês (rosácea, oval, faixa, moldura completa)",
+      "style": "cedula",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["guilhoche", "rosacea", "moldura", "ornamento", "seguranca"],
+      "params": { "rosette": "R, a, k, n, b, m, phase, color, w", "band": "len, vertical, a, f, n, phase", "frame": "m 34, band 22, t" },
+      "path": "styles/cedula/engine/cedula.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Cedula.G. Fase animável. Proposta."
+    },
+    {
+      "id": "cedula.pintores_de_tom",
+      "name": "Pintores de tom: busto de perfil, livro com raios, pilha de moedas, texto sombreado",
+      "style": "cedula",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["retrato", "busto", "livro", "moedas", "vinheta", "texto"],
+      "params": { "busto": "ox, oy, s, hair, skin, coat, oculos", "livro": "cx, cy, s, rays 0..1", "moedas": "cx, base, n, rx, ry, h", "texto": "font, top, bottom, align, track" },
+      "path": "styles/cedula/engine/cedula.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Cedula.T. O retrato substitui 'personagem' neste estilo. Proposta."
+    },
+    {
+      "id": "cedula.impressos",
+      "name": "Numeração de série, microtexto, selo batido, assinatura que se escreve, contorno de título",
+      "style": "cedula",
+      "type": "ui",
+      "dimension": "2d",
+      "tags": ["serie", "microtexto", "selo", "carimbo", "assinatura", "titulo"],
+      "params": { "serie": "text, color, size", "micro": "text, len", "selo": "R, text, k 0..1", "assinatura": "w, k 0..1, seed", "contorno": "font, color, w" },
+      "path": "styles/cedula/engine/cedula.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fontes Cinzel e Zilla Slab (OFL) em styles/cedula/fonts/. Proposta."
+    },
+    {
+      "id": "cedula.nota_uma_ideia",
+      "name": "Nota demo: 'Uma ideia rende juros'",
+      "style": "cedula",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": ["demo", "nota", "financas"],
+      "params": {},
+      "path": "styles/cedula/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "8 s; modelo de composição e de câmera macro -> inteira. Proposta."
+    }
+  ]
+}

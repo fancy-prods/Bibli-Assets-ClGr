@@ -1,0 +1,80 @@
+{
+  "style": "maquete",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "maquete.palco",
+      "name": "Palco isométrico (câmera ortográfica, luz, sombra suave, compositor tilt-shift)",
+      "style": "maquete",
+      "type": "module",
+      "dimension": "3d",
+      "tags": ["isometrico", "diorama", "three", "tilt-shift", "luz", "sombra"],
+      "params": {
+        "createStage": "span 8, target [x,y,z], fundo [c1,c2], shadow 2048",
+        "render": "zoom, focusY 0.52, band 0.22, blur 6, overlay(ctx,t), under(ctx,t)"
+      },
+      "path": "styles/maquete/engine/maquete.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. Three.js r170 em shared/vendor/three; depende de shared/web/kit.js."
+    },
+    {
+      "id": "maquete.moveis",
+      "name": "Peças de interior (sala em corte, estante com livros, poltrona, luminária, mesa, tapete, planta, quadro, janela)",
+      "style": "maquete",
+      "type": "component",
+      "dimension": "3d",
+      "tags": ["sala", "estante", "livros", "poltrona", "luminaria", "mesa", "planta", "janela"],
+      "params": {
+        "sala": "L 6, hWall 3.1, cores",
+        "estante": "w, h, d, rows, seed, cores",
+        "luminaria": "color; userData.on(k)",
+        "pilha": "n, seed"
+      },
+      "path": "styles/maquete/engine/maquete.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Primitivas box/cyl/ball com canto arredondado. Proposta."
+    },
+    {
+      "id": "maquete.pino",
+      "name": "Boneco-pino (em pé ou sentado, com livro, chapéu)",
+      "style": "maquete",
+      "type": "character",
+      "dimension": "3d",
+      "tags": ["personagem", "boneco", "pino", "leitor"],
+      "params": { "body": "#hex", "skin": "PAL.pele[i]", "hair": "#hex", "hat": "#hex | null", "sit": "bool", "book": "#hex | null", "s": "escala" },
+      "path": "styles/maquete/engine/maquete.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "userData.head/arms/book para animar. Personagem redesenhado em 3D; nada vem do palco. Proposta."
+    },
+    {
+      "id": "maquete.movimento_texto",
+      "name": "Gestos (brota, cai, pulo), etiqueta 3D e cartão de título",
+      "style": "maquete",
+      "type": "preset",
+      "dimension": "3d",
+      "tags": ["animacao", "pop-up", "etiqueta", "titulo", "legenda"],
+      "params": { "brota": "obj, t, t0, dur 0.55", "cai": "obj, t, t0, y0, hgt 2.2", "pulo": "p, n, h", "etiqueta": "texto, color", "titulo": "kicker, lines, px, py, size" },
+      "path": "styles/maquete/engine/maquete.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fonte Fredoka (OFL) em styles/maquete/fonts/. Proposta."
+    },
+    {
+      "id": "maquete.cena_biblioteca",
+      "name": "Cena demo: biblioteca em miniatura",
+      "style": "maquete",
+      "type": "scene",
+      "dimension": "3d",
+      "tags": ["demo", "biblioteca", "sala", "leitor"],
+      "params": {},
+      "path": "styles/maquete/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "8 s; modelo de ordem de montagem. Proposta."
+    }
+  ]
+}

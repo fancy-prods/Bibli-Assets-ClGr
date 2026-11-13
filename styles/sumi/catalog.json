@@ -1,0 +1,59 @@
+{
+  "style": "sumi",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "sumi.pincelada",
+      "name": "Pincelada de nanquim com cerdas (entrada, pressão, saída, pincel seco) revelada ao longo do traço",
+      "style": "sumi",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["pincel", "nanquim", "traco", "cerdas", "caligrafia"],
+      "params": { "pts": "[[x,y],...] (spline)", "w": "largura px", "tone": "0..1", "dry": "0..1", "tin/tout": "fração de entrada/saída", "wfn": "perfil de largura (u)->0..1", "seed": "int", "draw": "(ctx, k 0..1, alpha)" },
+      "path": "styles/sumi/engine/sumi.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. Canvas 2D; depende de shared/web/kit.js."
+    },
+    {
+      "id": "sumi.aguada",
+      "name": "Aguadas: mancha com linha de maré, cordilheira esmaecida, névoa, papel de arroz",
+      "style": "sumi",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["aguada", "montanha", "nevoa", "papel", "textura"],
+      "params": { "wash": "rx, ry, tone, edge, rough, seed", "mountain": "y, amp, tone, fade, freq, peaks[[x,h,w]], seed", "mist": "[{x, y, r, a, sy, v}]", "paper": "W, H, seed" },
+      "path": "styles/sumi/engine/sumi.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Renderizadas uma vez e guardadas. Proposta."
+    },
+    {
+      "id": "sumi.motivos",
+      "name": "Motivos e acabamento: tufo de agulhas, pássaro, selo vermelho, texto que assenta",
+      "style": "sumi",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["pinheiro", "passaro", "selo", "carimbo", "texto", "titulo"],
+      "params": { "needles": "x, y, ang, spread, n, len, seed", "bird": "x, y, s, flap", "seal": "x, y, size, text, k", "text": "font (Shippori Mincho), track, tone, k" },
+      "path": "styles/sumi/engine/sumi.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fonte Shippori Mincho (OFL) em styles/sumi/fonts/. Proposta."
+    },
+    {
+      "id": "sumi.cena_ler_devagar",
+      "name": "Cena demo: leitor sob o pinheiro, três cordilheiras e sol (inclui a figura em quatro marcas)",
+      "style": "sumi",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": ["demo", "montanha", "pinheiro", "leitor", "figura"],
+      "params": {},
+      "path": "styles/sumi/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "8 s. A figura humana (manto, joelho, cabeça, chapéu, braço, livro) está definida aqui e serve de modelo. Proposta."
+    }
+  ]
+}

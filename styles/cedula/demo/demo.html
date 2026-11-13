@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>cédula: demo</title><style>html,body{margin:0;background:#000}</style></head>
+<body><canvas id="view"></canvas>
+<script src="../../../shared/web/kit.js"></script>
+<script src="../engine/cedula.js"></script>
+<script>
+/* Demo do estilo cédula: "Uma ideia rende juros", 8 s. Começa em macro no retrato e abre para a nota inteira. */
+const K = Kit, C = Cedula, G = C.G, T = C.T, W = K.W, H = K.H, view = document.getElementById('view'); K.stage(view);
+const VERDE = C.TINTAS.verde, SEPIA = C.TINTAS.sepia; let S;
+const ready = K.fonts([{ family: 'Cinzel', url: '../fonts/cinzel-latin-500-normal.woff2', weight: 500 }, { family: 'Cinzel', url: '../fonts/cinzel-latin-700-normal.woff2', weight: 700 }, { family: 'Cinzel', url: '../fonts/cinzel-latin-900-normal.woff2', weight: 900 }, { family: 'Zilla Slab', url: '../fonts/zilla-slab-latin-700-normal.woff2', weight: 700 }]).then(() => { S = C.Stage(view); });
+const MX = 440, MY = 540, RX = 270, RY = 350;
+function render(t) {
+  const zk = K.tween(t, 1.5, 3.4, 0, 1, K.ease.inOut), sh = t > 4.7 && t < 5.0 ? Math.sin(t * 90) * 5 * (1 - (t - 4.7) / 0.3) : 0;
+  S.cam.zoom = K.lerp(2.15, 1, zk) * K.tween(t, 5.2, 8, 1, 1.05, K.ease.inOut); S.cam.x = K.lerp(500, W / 2, zk) + sh; S.cam.y = K.lerp(450, H / 2, zk);
+  const o = S.out; S.begin();
+  // --- vetores: moldura, guilhochês, textos finos
+  G.frame(o, W, H, { t, color: VERDE, band: 22 });
+  G.oval(o, MX, MY, RX + 24, RY + 24, { a: 13, k: 30, n: 6, color: VERDE, phase: t * 0.7 }); G.oval(o, MX, MY, RX + 50, RY + 50, { a: 9, k: 44, n: 5, color: VERDE, phase: -t * 0.5, alpha: 0.6 });
+  o.strokeStyle = VERDE; o.lineWidth = 4; o.beginPath(); o.ellipse(MX, MY, RX + 5, RY + 5, 0, 0, 7); o.stroke();
+  const kn = K.tween(t, 2.6, 3.6, 0, 1, K.ease.outCubic);
+  if (kn > 0) { for (const [R, a, k2, n, ph] of [[136, 15, 16, 8, t * 0.6], [104, 11, 11, 7, -t * 0.8], [160, 6, 60, 4, t * 0.3]]) G.rosette(o, 1640, 770, R * kn, { a, k: k2, n, color: SEPIA, phase: ph, alpha: 0.8 * kn }); }
+  const kt = K.tween(t, 2.8, 3.5, 0, 1, K.ease.outCubic);
+  o.save(); o.globalAlpha = kt; o.fillStyle = VERDE; o.font = '700 34px Cinzel'; o.letterSpacing = '13px'; o.textAlign = 'center'; o.fillText('REPÚBLICA DOS LEITORES', 1290, 204); o.font = '500 28px Cinzel'; o.letterSpacing = '5.5px'; o.textAlign = 'left'; o.fillText('VALOR PAGÁVEL AO LEITOR EM CONHECIMENTO', 792, 606); o.restore();
+  if (kt > 0) { o.globalAlpha = kt; C.micro(o, 'UMA IDEIA RENDE JUROS · UNFOLD · ', 792, 548, 1010, { color: VERDE }); C.micro(o, 'LEIA · RELEIA · ANOTE · ', 792, 562, 1010, { color: VERDE }); o.globalAlpha = 1; }
+  const k1 = K.tween(t, 3.0, 3.9, 0, 1), k2 = K.tween(t, 3.25, 4.15, 0, 1);
+  if (k1 > 0) { o.globalAlpha = k1; C.contorno(o, 'UMA IDEIA', 788, 372, { font: '900 138px Cinzel', color: VERDE, track: 4 }); o.globalAlpha = k2; C.contorno(o, 'RENDE JUROS', 788, 506, { font: '900 128px Cinzel', color: VERDE, track: 2 }); o.globalAlpha = 1; }
+  // --- gravação 1 (verde): retrato + título
+  let x = S.toneBegin(); const kp = K.tween(t, 0.15, 1.5, 0, 1, K.ease.outCubic);
+  x.save(); x.beginPath(); x.ellipse(MX, MY, RX, RY, 0, 0, 7); x.clip(); x.globalAlpha = kp; T.ovalBg(x, MX, MY, RX, RY); T.busto(x, MX - 300, MY - 330, 0.96); x.restore();
+  x.globalAlpha = k1; T.texto(x, 'UMA IDEIA', 788, 372, { font: '900 138px Cinzel', track: 4, top: 0.9, bottom: 0.35 }); x.globalAlpha = k2; T.texto(x, 'RENDE JUROS', 788, 506, { font: '900 128px Cinzel', track: 2, top: 0.9, bottom: 0.35 }); x.globalAlpha = 1;
+  S.print({ ink: VERDE, period: 6.4, angle: -0.12, depth: 26 });
+  // --- gravação 2 (sépia): vinheta do livro, moedas e numeral
+  x = S.toneBegin(); const kv = K.tween(t, 3.5, 4.4, 0, 1, K.ease.outCubic);
+  x.globalAlpha = kv; T.livro(x, 1010, 830, 1.02, { rays: K.tween(t, 3.6, 4.8, 0.3, 1, K.ease.outCubic) }); T.moedas(x, 1262, 928, 7); T.moedas(x, 1378, 934, 4, { rx: 54 });
+  x.globalAlpha = kn; T.texto(x, '1', 1640, 834, { font: '900 190px Cinzel', align: 'center', top: 1, bottom: 0.5 }); x.globalAlpha = 1;
+  S.print({ ink: SEPIA, period: 5.6, angle: 0.5, depth: 18, wave: 1.2 });
+  if (kn > 0) { o.globalAlpha = kn; C.contorno(o, '1', 1640, 834, { font: '900 190px Cinzel', color: SEPIA, align: 'center', w: 2.4 }); o.globalAlpha = 1; }
+  // --- numeração, assinatura, selo
+  S.xf(o);
+  if (t > 4.0) { const n = Math.min(13, Math.floor((t - 4.0) * 30)); C.serie(o, 'UF 0113 2026 A'.slice(0, n + 1), 1800, 168, { align: 'right', size: 40 }); C.serie(o, 'UF 0113 2026 A'.slice(0, n + 1), 1800, 962, { align: 'right', size: 40, color: '#1b2440' }); }
+  C.assinatura(o, 1236, 676, 250, { k: K.tween(t, 5.2, 6.2, 0, 1, K.ease.linear) }); if (t > 6.2) { o.fillStyle = VERDE; o.font = '500 17px Cinzel'; o.letterSpacing = '4px'; o.fillText('O AUTOR', 1318, 722); o.letterSpacing = '0px'; }
+  C.selo(o, 706, 872, 96, { k: K.clamp((t - 4.7) / 0.22) });
+  S.finish(t, { sweep: K.remap(t, 6.2, 7.7) * (t > 6.2 && t < 7.7 ? 1 : -1) });
+}
+K.run({ duration: 8, fps: 30, ready, render });
+</script></body></html>

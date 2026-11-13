@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>maquete: demo</title><style>html,body{margin:0;background:#000}</style>
+<script type="importmap">{"imports":{"three":"../../../shared/vendor/three/three.module.min.js"}}</script></head>
+<body><canvas id="view"></canvas>
+<script src="../../../shared/web/kit.js"></script>
+<script type="module">
+/* Demo do estilo maquete: "A biblioteca que cabe na mão", 8 s. A sala brota peça por peça. */
+import * as M from '../engine/maquete.js';
+const K = Kit, P = M.PAL, view = document.getElementById('view'); K.stage(view);
+let S, parts = [], lamp, reader, walker, plant, tag, sun, books;
+const ready = K.fonts([{ family: 'Fredoka', url: '../fonts/fredoka-latin-500-normal.woff2', weight: 500 }, { family: 'Fredoka', url: '../fonts/fredoka-latin-700-normal.woff2', weight: 700 }]).then(() => {
+  S = M.createStage(view, { span: 8.0, target: [-0.75, 1.22, 1.15] }); const R = S.root;
+  const add = (o, t0, kind = 'brota') => { o.userData.s0 = o.scale.x; parts.push({ o, t0, kind, y0: o.position.y }); R.add(o); return o; };
+  const room = M.sala(6, 3.1); R.add(room);
+  // estante na parede esquerda (x = -3), virada para +x
+  const est = M.estante(3.3, 2.5, 0.46, { rows: 4, seed: 5 }); est.rotation.y = Math.PI / 2; est.position.set(-2.76, 0, -0.9); add(est, 0.5); books = est.userData.books;
+  // janela e quadros na parede direita (z = -3)
+  const jan = M.janela(1.3, 1.25); jan.position.set(0.5, 1.15, -2.98); add(jan, 0.8);
+  const q1 = M.quadro(0.6, 0.8, P.turquesa, P.coral); q1.position.set(2.15, 1.5, -2.98); add(q1, 1.0);
+  const q2 = M.quadro(0.5, 0.5, P.ameixa, P.mostarda); q2.position.set(-1.3, 1.9, -2.98); add(q2, 1.1);
+  sun = M.manchaDeLuz(1.3, 2.0, 0.9); sun.position.set(0.5, 0, -2.6); sun.rotation.z = 0; R.add(sun);
+  // tapete, poltrona, luminária, mesa
+  const tap = M.tapete(1.75, P.creme, P.coral); tap.position.set(0.35, 0, 0.55); add(tap, 1.1);
+  const pol = M.poltrona(P.turquesa); pol.position.set(-1.05, 0, -1.45); pol.rotation.y = Math.PI / 4; add(pol, 1.4);
+  lamp = M.luminaria(P.mostarda); lamp.position.set(-2.05, 0, -2.35); add(lamp, 1.7);
+  const mes = M.mesa(0.5, 0.42); mes.position.set(0.75, 0.03, 0.75); add(mes, 1.9);
+  const pil = M.pilha(3, 1); pil.position.set(0.68, 0.45, 0.7); add(pil, 2.15); const can = M.caneca(P.creme); can.position.set(1.0, 0.45, 0.98); add(can, 2.3);
+  plant = M.planta(1.15); plant.position.set(2.35, 0, -2.3); add(plant, 2.1);
+  const pil2 = M.pilha(6, 4); pil2.position.set(-2.3, 0, 1.75); add(pil2, 2.3);
+  const banq = M.cyl(0.26, 0.24, 0.36, P.ameixa, { x: 2.2, z: 1.9 }); add(banq, 2.4); const pil3 = M.pilha(2, 7); pil3.position.set(2.2, 0.36, 1.9); pil3.scale.setScalar(0.8); add(pil3, 2.55);
+  // bonecos
+  reader = M.pino({ body: P.coral, skin: P.pele[1], hair: P.grafite, sit: true, book: P.marinho }); reader.position.set(-0.98, 0.42, -1.38); reader.rotation.y = Math.PI / 4; add(reader, 2.7, 'cai');
+  walker = M.pino({ body: P.mostarda, skin: P.pele[0], hair: P.madeira2, hat: P.marinho, s: 0.95 }); add(walker, 3.1, 'cai');
+  const carry = M.pilha(3, 9); carry.scale.setScalar(0.62); carry.position.set(0, 0.36, 0.26); walker.add(carry); walker.userData.arms.forEach((a, i) => { a.rotation.x = -1.1; a.rotation.z = (i ? -1 : 1) * 0.1; });
+  tag = M.etiqueta('capítulo 1', { color: P.marinho }); tag.position.set(-0.98, 2.05, -1.38); R.add(tag);
+});
+function render(t) {
+  const R = S.root; R.rotation.y = K.tween(t, 0, 8, -0.16, 0.14, K.ease.inOut);
+  for (const p of parts) { if (p.kind === 'cai') M.cai(p.o, t, p.t0, p.y0); else M.brota(p.o, t, p.t0, 0.55); }
+  // livros entram em onda depois da estante
+  books.forEach((b, i) => { const k = K.ease.outBack(K.clamp((t - 1.0 - i * 0.012) / 0.3)); b.scale.set(1, Math.max(0.001, k), 1); });
+  lamp.userData.on(K.tween(t, 2.25, 2.5, 0, 1, K.ease.outCubic) * (0.94 + 0.06 * Math.sin(t * 9)));
+  sun.material.opacity = sun.userData.a * K.tween(t, 1.2, 1.9, 0, 1);
+  // leitor: cabeça acompanha as linhas, vira a página
+  const h = reader.userData.head; h.rotation.x = 0.42 + Math.sin(t * 1.7) * 0.03; h.rotation.y = Math.sin(t * 0.9) * 0.16; reader.userData.book.rotation.z = Math.sin(t * 1.1) * 0.03;
+  // andarilho: cruza a sala aos pulinhos carregando livros
+  const A = [2.25, -0.9], B = [1.72, 1.15], dir = Math.atan2(B[0] - A[0], B[1] - A[1]), p = K.clamp((t - 3.9) / 3.3), e = K.ease.inOut(p);
+  walker.position.x = K.lerp(A[0], B[0], e); walker.position.z = K.lerp(A[1], B[1], e); walker.rotation.y = dir + Math.sin(p * 6 * Math.PI) * 0.06;
+  if (t > 3.85) { walker.position.y = M.pulo(e, 6, 0.17); walker.rotation.z = Math.sin(e * 12 * Math.PI) * 0.035; }
+  walker.userData.head.rotation.x = -0.1 + Math.sin(t * 2.2) * 0.04;
+  plant.userData.leaves.forEach((l, i) => { l.rotation.z = Math.sin(t * 1.3 + i) * 0.05; });
+  tag.visible = t > 3.5; const tk = K.ease.outBack(K.clamp((t - 3.5) / 0.4)); tag.scale.setScalar(tk); tag.position.y = 2.05 + Math.sin(t * 2) * 0.04;
+  S.render(t, { zoom: K.tween(t, 0, 8, 0.97, 1.05, K.ease.inOut), focusY: 0.52, band: 0.22, blur: 6, overlay: (x) => M.titulo(x, t, { t0: 4.1, kicker: 'UNFOLD', lines: ['A biblioteca', 'que cabe na mão'], px: 96, py: 790, size: 92 }) });
+}
+K.run({ duration: 8, fps: 30, ready, render });
+</script></body></html>

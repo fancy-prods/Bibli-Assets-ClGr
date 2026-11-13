@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>sumi: demo</title><style>html,body{margin:0;background:#000}</style></head>
+<body><canvas id="view"></canvas>
+<script src="../../../shared/web/kit.js"></script>
+<script src="../engine/sumi.js"></script>
+<script>
+/* Demo do estilo sumi: "Ler devagar", 8 s. Montanha em aguada, pinheiro em pincel seco, leitor em quatro marcas. */
+const K = Kit, S = Sumi, W = K.W, H = K.H, view = document.getElementById('view'); K.stage(view); view.width = W; view.height = H; const out = view.getContext('2d');
+let A;
+const ready = K.fonts([{ family: 'Shippori Mincho', url: '../fonts/shippori-mincho-latin-500-normal.woff2', weight: 500 }, { family: 'Shippori Mincho', url: '../fonts/shippori-mincho-latin-700-normal.woff2', weight: 700 }]).then(() => {
+  A = { paper: S.paper(),
+    m1: S.mountain({ y: 470, amp: 250, tone: 0.3, fade: 300, seed: 2.2, freq: 0.9, peaks: [[1330, 0.75, 210], [1750, 0.4, 260]] }),
+    m2: S.mountain({ y: 600, amp: 190, tone: 0.5, fade: 240, seed: 7.4, freq: 1.3, peaks: [[980, 0.5, 170], [1560, 0.3, 200]] }),
+    m3: S.mountain({ y: 760, amp: 120, tone: 0.72, fade: 200, seed: 4.1, freq: 1.8, peaks: [[1840, 0.5, 220]] }),
+    sun: S.wash({ rx: 92, ry: 92, tone: 0.95, seed: 3, edge: 0.3, rough: 0.05 }),
+    // pinheiro: tronco em pincel seco, galhos, tufos de agulhas
+    trunk: S.stroke({ pts: [[236, 1100], [262, 900], [246, 720], [300, 540], [404, 400], [470, 300]], w: 64, tone: 0.95, dry: 0.5, tin: 0.04, tout: 0.5, seed: 11 }),
+    trunk2: S.stroke({ pts: [[212, 1100], [236, 930], [224, 760]], w: 26, tone: 0.9, dry: 0.75, tin: 0.05, tout: 0.5, seed: 12 }),
+    br: [
+      S.stroke({ pts: [[306, 540], [440, 500], [600, 520], [730, 480]], w: 20, tone: 0.92, dry: 0.4, tin: 0.05, tout: 0.6, seed: 21 }),
+      S.stroke({ pts: [[404, 400], [520, 330], [680, 320], [800, 262]], w: 17, tone: 0.92, dry: 0.4, tin: 0.05, tout: 0.6, seed: 22 }),
+      S.stroke({ pts: [[262, 720], [180, 640], [110, 650]], w: 15, tone: 0.9, dry: 0.45, tin: 0.05, tout: 0.6, seed: 23 }),
+      S.stroke({ pts: [[470, 300], [520, 210], [610, 170]], w: 13, tone: 0.9, dry: 0.4, tin: 0.05, tout: 0.6, seed: 24 }),
+    ],
+    nd: [[470, 494, 1], [590, 512, 2], [716, 476, 3], [540, 322, 4], [672, 314, 5], [790, 258, 6], [130, 640, 7], [560, 190, 8], [612, 166, 9], [368, 452, 10], [200, 652, 11]].map(([x, y, s]) => S.needles({ x, y, ang: -Math.PI / 2 + (K.hash(s) - 0.5) * 0.5, spread: 2.5, n: 15, len: 66, seed: s })),
+    // rocha e leitor
+    rock: S.wash({ rx: 150, ry: 46, tone: 0.55, seed: 8, edge: 0.7, rough: 0.5 }),
+    robe: S.stroke({ pts: [[742, 760], [722, 800], [706, 852], [716, 900]], w: 108, tone: 0.95, dry: 0.22, tin: 0.3, seed: 31, wfn: (u) => 0.42 + 0.58 * K.smooth(u / 0.55) * (u > 0.86 ? (1 - u) / 0.14 * 0.6 + 0.4 : 1) }),
+    knee: S.stroke({ pts: [[726, 880], [790, 876], [836, 898]], w: 46, tone: 0.9, dry: 0.3, tin: 0.2, tout: 0.5, seed: 32 }),
+    head: S.wash({ rx: 21, ry: 23, tone: 1.3, seed: 12, edge: 0.5, rough: 0.1 }),
+    hat: S.stroke({ pts: [[684, 730], [746, 696], [814, 742]], w: 15, tone: 0.95, dry: 0.3, tin: 0.1, tout: 0.3, seed: 33 }),
+    book: [S.stroke({ pts: [[796, 838], [836, 812]], w: 9, tone: 0.95, dry: 0.2, tin: 0.1, tout: 0.3, seed: 34, n: 12 }), S.stroke({ pts: [[796, 838], [828, 850]], w: 9, tone: 0.95, dry: 0.2, tin: 0.1, tout: 0.3, seed: 35, n: 12 })],
+    arm: S.stroke({ pts: [[752, 790], [776, 828], [800, 838]], w: 15, tone: 0.9, dry: 0.3, tin: 0.1, tout: 0.4, seed: 36, n: 16 }),
+    ground: [S.stroke({ pts: [[380, 936], [700, 928], [1010, 942]], w: 30, tone: 0.7, dry: 0.85, tin: 0.1, tout: 0.4, seed: 41 }), S.stroke({ pts: [[60, 1000], [330, 986], [560, 1002]], w: 36, tone: 0.75, dry: 0.8, tin: 0.1, tout: 0.4, seed: 42 })],
+    grass: [[880, 936], [930, 942], [640, 932], [420, 996], [1080, 950]].map(([x, y], i) => S.needles({ x, y, ang: -Math.PI / 2, spread: 1.0, n: 5, len: 40, seed: 60 + i, tone: 0.8 })),
+  };
+});
+const mist = [{ x: 1150, y: 520, r: 520, a: 0.9, ph: 0, sy: 0.22 }, { x: 1700, y: 640, r: 460, a: 0.85, ph: 2, sy: 0.2, v: 4 }, { x: 900, y: 690, r: 500, a: 0.8, ph: 4, sy: 0.18, v: 8 }, { x: 1500, y: 830, r: 620, a: 0.9, ph: 1, sy: 0.2, v: 5 }, { x: 500, y: 620, r: 380, a: 0.5, ph: 3, sy: 0.25, v: 3 }];
+function render(t) {
+  const z = K.tween(t, 0, 8, 1.0, 1.045, K.ease.inOut); out.setTransform(1, 0, 0, 1, 0, 0); out.globalAlpha = 1; out.globalCompositeOperation = 'source-over'; out.filter = 'none'; out.drawImage(A.paper, 0, 0);
+  out.setTransform(z, 0, 0, z, (1 - z) * W * 0.45, (1 - z) * H * 0.6); out.globalCompositeOperation = 'multiply';
+  const q = (a, b) => K.clamp((t - a) / (b - a));
+  // sol vermelho (antes da montanha, para ficar atrás da crista)
+  out.save(); out.globalCompositeOperation = 'source-over'; const ks = q(4.6, 5.6); if (ks > 0) { const cx = 1330, cy = 250; out.globalAlpha = K.ease.outCubic(ks) * 0.9; const gr = out.createRadialGradient(cx, cy, 0, cx, cy, 96); gr.addColorStop(0, S.SELO); gr.addColorStop(0.86, S.SELO); gr.addColorStop(1, K.rgba(S.SELO, 0)); out.fillStyle = gr; out.fillRect(cx - 100, cy - 100, 200, 200); } out.restore();
+  A.m1.draw(out, q(0.1, 2.0)); A.m2.draw(out, q(0.7, 2.6)); out.save(); out.globalCompositeOperation = 'source-over'; S.mist(out, t, mist.slice(0, 3)); out.restore();
+  A.m3.draw(out, q(1.3, 3.0)); out.save(); out.globalCompositeOperation = 'source-over'; S.mist(out, t, mist.slice(3)); out.restore();
+  // chão e pinheiro
+  A.ground.forEach((s, i) => s.draw(out, K.ease.outCubic(q(1.4 + i * 0.3, 2.3 + i * 0.3))));
+  A.trunk2.draw(out, K.ease.inOut(q(1.5, 2.4))); A.trunk.draw(out, K.ease.inOut(q(1.6, 3.2)));
+  A.br.forEach((s, i) => s.draw(out, K.ease.outCubic(q(2.7 + i * 0.22, 3.4 + i * 0.22))));
+  A.nd.forEach((s, i) => s.draw(out, q(3.2 + i * 0.11, 3.75 + i * 0.11)));
+  A.grass.forEach((s, i) => s.draw(out, q(3.0 + i * 0.1, 3.4 + i * 0.1)));
+  // leitor: pedra, manto, joelho, cabeça, chapéu, braço, livro
+  A.rock.draw(out, 760, 908, q(3.9, 4.6)); A.robe.draw(out, K.ease.outCubic(q(4.2, 4.8))); A.knee.draw(out, K.ease.outCubic(q(4.6, 4.95)));
+  A.head.draw(out, 752, 736, q(4.85, 5.1)); A.hat.draw(out, K.ease.outCubic(q(5.0, 5.25))); A.arm.draw(out, K.ease.outCubic(q(5.15, 5.35))); A.book.forEach((s, i) => s.draw(out, q(5.3 + i * 0.1, 5.45 + i * 0.1)));
+  // pássaros
+  for (let i = 0; i < 3; i++) { const k = t - 5.0 - i * 0.3; if (k > 0) S.bird(out, 1090 + k * 34 + i * 70, 300 - k * 12 + i * 34 + Math.sin(k * 2 + i) * 6, 1 - i * 0.14, 0.5 + 0.5 * Math.sin(k * 9 + i * 2), Math.min(1, k * 2)); }
+  // texto e selo (sem zoom)
+  out.setTransform(1, 0, 0, 1, 0, 0); out.globalCompositeOperation = 'multiply';
+  S.text(out, 'ler devagar', 1010, 930, q(5.6, 6.5), { font: '500 112px "Shippori Mincho"', track: 3 });
+  S.text(out, 'CAPÍTULO UM  ·  A MONTANHA NÃO TEM PRESSA', 1016, 990, q(6.1, 6.9), { font: '500 23px "Shippori Mincho"', track: 4.2, tone: 0.75 });
+  out.globalCompositeOperation = 'source-over'; S.seal(out, 1712, 898, 72, 'UF', K.clamp((t - 6.8) / 0.25));
+}
+K.run({ duration: 8, fps: 30, ready, render });
+</script></body></html>
