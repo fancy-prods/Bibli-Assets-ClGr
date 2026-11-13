@@ -1,0 +1,94 @@
+{
+  "style": "cordel",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "cordel.motor_gravura",
+      "name": "Palco de xilogravura (papel, filtros de borda roída e falha de tinta, fervura, carimbo)",
+      "style": "cordel",
+      "type": "module",
+      "dimension": "2d",
+      "tags": ["xilogravura", "filtro", "papel", "textura", "carimbo", "12fps"],
+      "params": {
+        "paper": "palha | rosa | verde | azul | cru | laranja | #hex",
+        "camadas": "spot (cores, multiply), ink (preto), type (texto)",
+        "boil": "boil(t): semente a cada 1/6 s + tremor de registro",
+        "stamp": "stamp(node, t, t0, cx, cy): entrada em 3 poses",
+        "step": "step(t, fps=12)"
+      },
+      "path": "styles/cordel/engine/cordel.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. SVG + filtros; depende de shared/web/kit.js."
+    },
+    {
+      "id": "cordel.pecas",
+      "name": "Peças de gravura (sol com rosto, árvore, mandacaru, casa, pássaro, chão, nuvem, moldura)",
+      "style": "cordel",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["sol", "arvore", "mandacaru", "casa", "passaro", "nuvem", "moldura", "sertao"],
+      "params": {
+        "sol": "cx, cy, r, color, n (raios)",
+        "copa": "cx, cy, rx, ry, seed, leaf",
+        "mandacaru": "x, yBase, h, color (flor)",
+        "casa": "x, yBase, w, color",
+        "passaro": "s; pose(i) alterna asa",
+        "moldura": "W, H, m, band"
+      },
+      "path": "styles/cordel/engine/cordel.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Cada peça aceita a camada spot para receber cor chapada. Proposta."
+    },
+    {
+      "id": "cordel.leitor",
+      "name": "Leitor sentado de perfil (chapéu de couro, camisa listrada, livro)",
+      "style": "cordel",
+      "type": "character",
+      "dimension": "2d",
+      "tags": ["personagem", "leitor", "sentado", "perfil", "livro"],
+      "params": {
+        "x, y, s": "posição dos pés do banco e escala",
+        "shirt": "cor chapada da camisa",
+        "blink(on)": "piscar em 2 poses",
+        "nod(deg)": "inclina a cabeça",
+        "turn(on)": "página virando"
+      },
+      "path": "styles/cordel/engine/cordel.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Conceito 'personagem lendo' existe em outros estilos; aqui foi redesenhado como gravura. Proposta."
+    },
+    {
+      "id": "cordel.texto",
+      "name": "Faixa de título entalhada e legenda carimbada palavra a palavra",
+      "style": "cordel",
+      "type": "ui",
+      "dimension": "2d",
+      "tags": ["titulo", "legenda", "tipografia", "headline"],
+      "params": {
+        "faixa": "text, cx, y, size, pad, font (Alfa Slab One)",
+        "legenda": "words [{w, t}], cx, y, size, font (IM Fell English), italic"
+      },
+      "path": "styles/cordel/engine/cordel.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fontes OFL em styles/cordel/fonts/. Proposta."
+    },
+    {
+      "id": "cordel.cena_leitor_umbuzeiro",
+      "name": "Cena demo: o leitor debaixo do umbuzeiro",
+      "style": "cordel",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": ["demo", "sertao", "leitor"],
+      "params": {},
+      "path": "styles/cordel/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "8 s. Modelo de ordem de impressão e de vida depois de impresso. Proposta."
+    }
+  ]
+}

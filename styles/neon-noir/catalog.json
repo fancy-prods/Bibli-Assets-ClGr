@@ -1,0 +1,110 @@
+{
+  "style": "neon-noir",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "neon-noir.motor_luz",
+      "name": "Pipeline de luz 2.5D (albedo × luz, emissivos, reflexo molhado, bloom, pós VHS)",
+      "style": "neon-noir",
+      "type": "module",
+      "dimension": "2.5d",
+      "tags": ["luz", "neon", "reflexo", "bloom", "chuva", "pos", "vhs", "glitch"],
+      "params": {
+        "scene": "{camera(t), sky, far[], albedo, emis, wet, signs[], lights(t), figures(t), volumetrics, rain, fg[], overlay, fx(t)}",
+        "lights": "[{x, y, r, color, i, sy}] em coordenadas de mundo",
+        "fx": "ca 0.0035, scan 0.07, grain 0.055, vig 0.62, glitch 0..1, bars 0..0.12",
+        "bloom": "[curto, largo] (default 0.55, 0.42)",
+        "reflect": "0..2 (default 1)"
+      },
+      "path": "styles/neon-noir/engine/nn-core.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. Canvas 2D + WebGL2. Depende de shared/web/kit.js."
+    },
+    {
+      "id": "neon-noir.letreiro",
+      "name": "Letreiro de neon (texto contornado, manuscrito e traçado livre, com falha)",
+      "style": "neon-noir",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["neon", "letreiro", "texto", "headline", "flicker"],
+      "params": {
+        "mode": "outline | fill",
+        "font": "Bebas Neue (outline) | Sacramento (fill)",
+        "color": "#hex (magenta, ciano, âmbar)",
+        "w": "espessura do tubo, 5..8",
+        "lit": "bool (apagado vai no albedo)",
+        "flicker": "NN.flicker(t, seed, amount 0..2+)"
+      },
+      "path": "styles/neon-noir/engine/nn-core.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "NN.textTube, NN.tubeStroke, NN.tubeUnlit, NN.flicker. Proposta."
+    },
+    {
+      "id": "neon-noir.cidade",
+      "name": "Peças de cenário urbano noturno",
+      "style": "neon-noir",
+      "type": "scene",
+      "dimension": "2.5d",
+      "tags": ["cidade", "rua", "tijolo", "vitrine", "poste", "beco", "chuva", "vapor", "horizonte"],
+      "params": {
+        "pecas": "brickWall, plasterWall, window (acesa/persiana/figura), door, awning, fireEscape, pipe, acUnit, signBox, lampPost, cables, dumpster, skyline, ground (com máscara de molhado), manhole",
+        "atmosfera": "rain({n, wind}), steam({color, rise, spread}), cone({color, len, spread})"
+      },
+      "path": "styles/neon-noir/engine/nn-city.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Tudo paramétrico por função; sem SVG fixo. Proposta."
+    },
+    {
+      "id": "neon-noir.figuras",
+      "name": "Figuras em silhueta com luz de recorte (leitor, saxofonista, passante, gato)",
+      "style": "neon-noir",
+      "type": "character",
+      "dimension": "2d",
+      "tags": ["personagem", "silhueta", "rim", "sobretudo", "sax", "guarda-chuva", "gato"],
+      "params": {
+        "comum": "x, y, scale, flip, rims[{color, dir, w, a, soft}], wrap[]",
+        "leitor": "look 0..1, bookColor",
+        "saxofonista": "saxRim[]",
+        "passante": "speed, umbrella",
+        "gato": "eyes"
+      },
+      "path": "styles/neon-noir/engine/nn-figure.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Peças em NN.Fig.parts (leg, arm, head, coat). Conceito 'personagem em camadas' existe em palco, mas foi redesenhado do zero. Proposta."
+    },
+    {
+      "id": "neon-noir.dialogo_hud",
+      "name": "Caixa de diálogo digitada e HUD de fita",
+      "style": "neon-noir",
+      "type": "ui",
+      "dimension": "2d",
+      "tags": ["legenda", "dialogo", "hud", "timecode", "texto"],
+      "params": {
+        "dialog": "x, y, w, h, speaker, color, segs[{text, color, shake}], t0, cps",
+        "hud": "label, tc0"
+      },
+      "path": "styles/neon-noir/engine/nn-figure.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "NN.dialog e NN.hud. Fontes Chakra Petch e Share Tech Mono (OFL) em styles/neon-noir/fonts/. Proposta."
+    },
+    {
+      "id": "neon-noir.cena_rua_do_sax",
+      "name": "Cena demo: Rua do Sax (clube de jazz + livraria 24h, chuva)",
+      "style": "neon-noir",
+      "type": "scene",
+      "dimension": "2.5d",
+      "tags": ["demo", "rua", "jazz", "livraria", "noite"],
+      "params": {},
+      "path": "styles/neon-noir/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "8 s, 30 fps. Serve de modelo de como montar uma cena. Proposta."
+    }
+  ]
+}

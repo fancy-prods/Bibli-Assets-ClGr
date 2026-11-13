@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>bebop: demo</title><style>html,body{margin:0;background:#000}</style></head>
+<body><canvas id="view"></canvas>
+<script src="../../../shared/web/kit.js"></script>
+<script src="../engine/bebop.js"></script>
+<script>
+/* Demo do estilo bebop: capa "Como ler um livro", 16 tempos a 120 bpm (8 s). */
+const K = Kit, B = Bebop, W = K.W, H = K.H, view = document.getElementById('view'); K.stage(view);
+const T = B.Tempo(120, 0.66); let P;
+const ready = K.fonts([
+  { family: 'League Gothic', url: '../fonts/league-gothic-latin-400-normal.woff2' }, { family: 'Abril Fatface', url: '../fonts/abril-fatface-latin-400-normal.woff2' },
+  { family: 'Playfair Display', url: '../fonts/playfair-display-latin-700-italic.woff2', weight: 700, style: 'italic' },
+  { family: 'Space Mono', url: '../fonts/space-mono-latin-400-normal.woff2' }, { family: 'Space Mono', url: '../fonts/space-mono-latin-700-normal.woff2', weight: 700 },
+]).then(() => { P = B.Press(view, { prensagem: 'cobalto' }); });
+
+function render(t) {
+  const b = T.beat(t); P.set(b >= 14 ? 'carmim' : b >= 12 ? 'mostarda' : 'cobalto'); P.begin();
+  const cutK = (b >= 12 && b < 12.25) || (b >= 14 && b < 14.25) ? 1 : 0;   // tranco na troca de prensagem
+  // bloco de cor (chapa A)
+  const kb = T.snap(t, 0, 0.32); P.A.fillRect(-60, -20, 780 * kb, H + 40);
+  // disco (chapa B) com sulcos (K) e furo
+  const kd = T.snap(t, 1, 0.3), cx = 1716, cy = 846, R = 286 * kd;
+  if (kd > 0) { P.B.beginPath(); P.B.arc(cx, cy, R, 0, 7); P.B.fill();
+    P.on(['B'], (x) => { x.beginPath(); x.arc(cx, cy, 26 * kd, 0, 7); x.fill(); }, true);
+    P.K.save(); P.K.translate(cx, cy); P.K.rotate(t * 1.1); P.K.lineWidth = 3; for (const rr of [0.42, 0.5, 0.66, 0.74, 0.82, 0.92]) { P.K.beginPath(); P.K.arc(0, 0, R * rr, 0.25, 5.7 + rr); P.K.stroke(); }
+    P.K.restore(); P.K.save(); P.K.translate(cx, cy); P.K.rotate(t * 1.1);
+    B.halftone(P.K, [-R, -R, 2 * R, 2 * R], (c) => { c.beginPath(); c.arc(0, 0, R * 0.36, 0, 7); c.arc(0, 0, 30 * kd, 0, 7, true); }, (px, py) => K.remap(py, -R * 0.36, R * 0.36, 0, 0.8), { pitch: 12 }); P.K.restore(); }
+  // figura recortada sobre o bloco
+  const kf = T.snap(t, 2, 0.34); if (kf > 0) B.leitor(P, 44 + cutK * 8, 236 + (1 - kf) * 900, 1.16, { t, tempo: b > 3 ? T : null });
+  // título
+  const x0 = 792, tw = 1066, s1 = B.fit(P.K, 'COMO LER', tw, 'League Gothic', 400, 2), s2 = B.fit(P.A, 'UM LIVRO', tw, 'League Gothic', 400, 2);
+  B.reveal(P.K, [x0 - 20, 60, tw + 40, s1 * 0.84 + 62], T.hit(t, 3, 0.3), 'bottom', (x) => B.type(x, 'COMO LER', x0, 118 + s1 * 0.76, { size: s1, track: 2 }));
+  B.reveal(P.A, [x0 - 20, 118 + s1 * 0.8, tw + 40, s2 * 0.84 + 40], T.hit(t, 4 + 0.66, 0.3), 'top', (x) => B.type(x, 'UM LIVRO', x0, 150 + s1 * 0.76 + s2 * 0.76, { size: s2, track: 2 }));
+  // créditos
+  if (b >= 5) B.type(P.K, 'UNFOLD APRESENTA', x0 + 4, 92, { font: 'Space Mono', weight: 700, size: 27, track: 9 });
+  if (b >= 5.66) B.type(P.K, 'UF-0113  ·  ESTÉREO  ·  33⅓ RPM  ·  LADO A', 1884, 1010, { font: 'Space Mono', size: 24, track: 6, rot: -Math.PI / 2 });
+  // subtítulo + filete
+  const ks = T.hit(t, 6, 0.4); if (ks > 0) { P.K.fillRect(x0, 884, tw * ks, 5);
+    B.reveal(P.K, [x0, 780, tw, 100], T.hit(t, 6.66, 0.45), 'left', (x) => B.type(x, 'capítulo um: a primeira página', x0, 862, { font: 'Playfair Display', weight: 700, size: 54 })); P.K.font = 'italic 700 60px "Playfair Display"'; }
+  // barras de ritmo (mudam a cada colcheia com swing)
+  if (b >= 7) { const e = Math.floor(b) * 2 + ((b % 1) >= 0.66 ? 1 : 0), n = 34, bw = tw / n;
+    for (let i = 0; i < n; i++) { const h = 14 + Math.pow(K.hash(i * 3.7 + e * 11.3), 1.6) * 96 * (0.55 + 0.45 * T.pulse(t, 3)); (i % 7 === 3 ? P.B : P.K).fillRect(x0 + i * bw, 1020 - h, bw - 12, h); } }
+  // marcador de tempo: ponto que pula no bloco
+  if (b >= 8) { const k = T.pulse(t, 6); P.B.beginPath(); P.B.arc(96, 110 - k * 26, 26 + k * 8, 0, 7); P.B.fill(); P.on(['A'], (x) => { x.beginPath(); x.arc(96, 110 - k * 26, 26 + k * 8, 0, 7); x.fill(); }, true); }
+  P.end(t);
+}
+K.run({ duration: 8, fps: 30, ready, render });
+</script></body></html>

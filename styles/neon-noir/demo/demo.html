@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>neon-noir: demo</title>
+<style>html,body{margin:0;background:#000}</style></head>
+<body><canvas id="view"></canvas>
+<script src="../../../shared/web/kit.js"></script>
+<script src="../engine/nn-core.js"></script>
+<script src="../engine/nn-city.js"></script>
+<script src="../engine/nn-figure.js"></script>
+<script>
+/* Demo do estilo neon-noir: "Rua do Sax", 8 s. Clube de jazz, livraria aberta de madrugada, chuva. */
+const K = Kit, P = NN.PAL, C = NN.City, F = NN.Fig, W = K.W, H = K.H;
+const view = document.getElementById('view'); K.stage(view);
+const X0 = -300, WW = 2900, GY = 800, SIDE = 858;   // mundo: x de -300 a 2600; base da parede em y=800
+const HH = H + 90, wide = () => { const c = K.canvas(WW, HH), x = c.getContext('2d'); x.translate(-X0, 0); return [c, x]; };
+
+function build() {
+  const [albC, alb] = wide(), [emC, em] = wide(), [wetC, wet] = wide();
+  // ---- clube (tijolo), x -300..880
+  C.brickWall(alb, -300, -40, 1180, GY + 40, { seed: 7 });
+  C.ledge(alb, -300, 300, 1180, 18);
+  for (let i = 0; i < 4; i++) { const x = -250 + i * 290; if (i === 3) continue; C.window(alb, em, x, 70, 150, 190, { lit: i === 1 ? '#ffab40' : null, seed: i + 3, figure: i === 1 }); }
+  C.window(alb, em, 720, 70, 120, 190, { lit: null, seed: 9 });
+  C.fireEscape(alb, -270, 286, 250, 1, 300);
+  C.pipe(alb, 846, -40, GY, 14);
+  // porta + toldo
+  C.door(alb, em, 120, 470, 190, 330, { color: '#5a2b40', glass: '#ffab40' });
+  C.awning(alb, 84, 396, 262, 50);
+  // janela com persiana (luz âmbar em tiras)
+  C.window(alb, em, 400, 500, 170, 150, { lit: '#ffab40', blinds: true, seed: 5 });
+  // cartazes
+  [[-190, 520, '#c9a24a'], [-95, 536, '#7fb0c9'], [760, 560, '#c97f9a']].forEach(([x, y, c], i) => { alb.save(); alb.translate(x, y); alb.rotate((i - 1) * 0.03); alb.fillStyle = '#d8cfc4'; alb.fillRect(0, 0, 84, 118); alb.fillStyle = c; alb.fillRect(7, 7, 70, 62); alb.fillStyle = '#2a2030'; alb.beginPath(); alb.arc(42, 40, 20, 0, 7); alb.fill(); alb.fillRect(12, 80, 60, 7); alb.fillRect(12, 94, 40, 5); alb.restore(); });
+  C.signBox(alb, 632, 84, 112, 500);
+  // ---- beco, x 880..1100: vazado (aparece o fundo); lixeira
+  C.dumpster(alb, 896, GY + 6, 170, 118);
+  // ---- livraria (reboco azulado), x 1100..2600, térrea; letreiro em treliça no telhado
+  C.plasterWall(alb, 1100, 400, 1500, GY - 400, { seed: 12 });
+  C.ledge(alb, 1090, 384, 1520, 20, '#8f97b3');
+  { alb.save(); alb.strokeStyle = '#4a4660'; alb.fillStyle = '#4a4660'; alb.lineWidth = 6; // treliça
+    for (const x of [1160, 1392, 1624, 1790]) alb.fillRect(x - 4, 196, 8, 190);
+    alb.fillRect(1150, 214, 650, 6); alb.fillRect(1150, 368, 650, 6); alb.lineWidth = 3.5;
+    for (let x = 1160; x < 1780; x += 77.5) { alb.beginPath(); alb.moveTo(x, 220); alb.lineTo(x + 77.5, 368); alb.moveTo(x + 77.5, 220); alb.lineTo(x, 368); alb.stroke(); } alb.restore(); }
+  // caixa d'água no telhado
+  alb.fillStyle = '#3a3552'; alb.fillRect(2140, 226, 170, 110); alb.fillRect(2154, 336, 9, 50); alb.fillRect(2286, 336, 9, 50); alb.beginPath(); alb.moveTo(2128, 228); alb.lineTo(2225, 192); alb.lineTo(2322, 228); alb.closePath(); alb.fill();
+  alb.fillStyle = 'rgba(0,0,0,0.25)'; for (let i = 0; i < 6; i++) alb.fillRect(2140 + i * 30, 226, 3, 110);
+  // vitrine acesa com estantes e pilhas de livros em silhueta
+  const vx = 1180, vy = 450, vw = 540, vh = 310;
+  alb.fillStyle = '#2a2638'; alb.fillRect(vx - 14, vy - 14, vw + 28, vh + 28); alb.fillStyle = '#9aa0b8'; alb.fillRect(vx - 22, vy + vh + 14, vw + 44, 26);
+  { const gr = em.createLinearGradient(0, vy, 0, vy + vh); gr.addColorStop(0, '#ffd08a'); gr.addColorStop(0.55, '#f09a3e'); gr.addColorStop(1, '#8a4a1c'); em.fillStyle = gr; em.fillRect(vx, vy, vw, vh);
+    const r = K.rng(31); em.fillStyle = '#000';
+    for (let s = 0; s < 2; s++) { const sy = vy + 92 + s * 90; em.fillRect(vx, sy, vw, 7); for (let x = vx + 8; x < vx + vw - 14;) { const bw = r.range(9, 20), bh = r.range(46, 76); if (r.chance(0.16)) { x += r.range(20, 50); continue; } em.globalAlpha = r.range(0.72, 1); em.save(); if (r.chance(0.12)) { em.translate(x, sy); em.rotate(-0.22); em.fillRect(0, -bh, bw, bh); } else em.fillRect(x, sy - bh, bw, bh); em.restore(); x += bw + 2; } }
+    em.globalAlpha = 1; for (const [px, n] of [[vx + 70, 6], [vx + 220, 4], [vx + 400, 7], [vx + 470, 3]]) for (let i = 0; i < n; i++) em.fillRect(px - 44 + r.range(-6, 6), vy + vh - 14 - i * 15, 88 + r.range(-10, 10), 13);
+    em.fillRect(vx + vw / 2 - 4, vy, 8, vh); em.fillStyle = 'rgba(0,0,0,0.35)'; em.fillRect(vx, vy, vw, 26); }
+  C.door(alb, em, 1800, 460, 170, 340, { color: '#3b4660', glass: '#f09a3e', frame: '#232033' });
+  C.acUnit(alb, 2260, 470);
+  C.pipe(alb, 1108, 404, GY, 12, '#4c5672');
+  // ---- chão
+  C.ground(alb, wet, X0, X0 + WW, GY, SIDE, HH, 9);
+  C.manhole(alb, 760, 990);
+  // ---- tubos apagados (aparecem quando o letreiro falha)
+  signsDef.forEach((s) => s.paint(alb, false));
+  // poste (no albedo, à frente do beco)
+  const lamp = C.lampPost(alb, 985, SIDE - 4, 610, 1);
+  em.fillStyle = '#ffd9a0'; em.beginPath(); em.ellipse(lamp.lx, lamp.ly, 22, 7, 0, 0, 7); em.fill();
+  return { albC, emC, wetC, lamp };
+}
+
+/* letreiros: cada um pinta aceso (no próprio canvas) e apagado (no albedo) */
+const signsDef = [
+  { id: 'jazz', seed: 3, amount: 0.5, paint(c, lit) { ['J', 'A', 'Z', 'Z'].forEach((ch, i) => NN.textTube(c, ch, 688, 196 + i * 112, { font: '400 124px "Bebas Neue"', color: P.magenta, lit, w: 7 })); } },
+  { id: 'jazz-borda', seed: 8, amount: 0.15, paint(c, lit) { const p = (x) => { x.beginPath(); x.roundRect(644, 96, 88, 476, 14); }; lit ? NN.tubeStroke(c, p, P.cyan, 5) : NN.tubeUnlit(c, p, 5); } },
+  { id: 'aovivo', seed: 5, amount: 0.9, paint(c, lit) { NN.textTube(c, 'ao vivo', 250, 378, { font: '400 104px "Sacramento"', color: P.amber, mode: 'fill', lit, w: 5 }); } },
+  { id: 'livros', seed: 11, amount: 0.25, paint(c, lit) { NN.textTube(c, 'LIVROS', 1392, 372, { font: '400 196px "Bebas Neue"', color: P.cyan, lit, w: 8, spacing: 14 }); } },
+  { id: 'livros-s', seed: 12, amount: 2.2, paint(c, lit) { NN.textTube(c, '24H', 1648, 372, { font: '400 96px "Bebas Neue"', color: P.magenta, lit, w: 6, align: 'left' }); } },
+  { id: 'livro-icone', seed: 14, amount: 0.3, paint(c, lit) { const p = (x) => { x.beginPath(); x.moveTo(2106, 520); x.quadraticCurveTo(2066, 494, 2030, 508); x.lineTo(2030, 590); x.quadraticCurveTo(2066, 576, 2106, 602); x.quadraticCurveTo(2146, 576, 2182, 590); x.lineTo(2182, 508); x.quadraticCurveTo(2146, 494, 2106, 520); x.lineTo(2106, 602); };
+      lit ? NN.tubeStroke(c, p, P.magenta, 6) : NN.tubeUnlit(c, p, 6); } },
+];
+
+let scene, shot;
+const ready = K.fonts([
+  { family: 'Bebas Neue', url: '../fonts/bebas-neue-latin-400-normal.woff2' }, { family: 'Sacramento', url: '../fonts/sacramento-latin-400-normal.woff2' },
+  { family: 'Tilt Neon', url: '../fonts/tilt-neon-latin-400-normal.woff2' }, { family: 'Share Tech Mono', url: '../fonts/share-tech-mono-latin-400-normal.woff2' },
+  { family: 'Chakra Petch', url: '../fonts/chakra-petch-latin-500-normal.woff2', weight: 500 }, { family: 'Chakra Petch', url: '../fonts/chakra-petch-latin-700-normal.woff2', weight: 700 },
+]).then(() => {
+  const b = build();
+  // céu estático
+  const skyC = K.canvas(W, H), sk = skyC.getContext('2d'); { const gr = sk.createLinearGradient(0, 0, 0, 820); gr.addColorStop(0, '#05031a'); gr.addColorStop(0.45, '#170a36'); gr.addColorStop(0.8, '#4a1560'); gr.addColorStop(1, '#8a2a78'); sk.fillStyle = gr; sk.fillRect(0, 0, W, H);
+    const cl = K.canvas(480, 150), cx = cl.getContext('2d'), id = cx.createImageData(480, 150), d = id.data; // nuvens iluminadas por baixo (1/4 da resolução)
+    for (let y = 0; y < 150; y++) for (let x = 0; x < 480; x++) { const n = K.fbm(x / 82, y / 27, 4), v = Math.max(0, n - 0.42) * 2.2 * (0.35 + y / 150), i = (y * 480 + x) * 4; d[i] = 150; d[i + 1] = 40; d[i + 2] = 160; d[i + 3] = 255 * Math.min(1, v); }
+    cx.putImageData(id, 0, 0); sk.globalCompositeOperation = 'lighter'; sk.drawImage(cl, 0, 0, W, 600); sk.globalCompositeOperation = 'source-over'; }
+  // horizontes (três distâncias) e prédios médios atrás da livraria
+  const haze = (x, c, y0, y1, a) => { const gr = x.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, K.rgba(c, 0)); gr.addColorStop(1, K.rgba(c, a)); x.globalCompositeOperation = 'source-atop'; x.fillStyle = gr; x.fillRect(0, 0, 3000, H); x.globalCompositeOperation = 'source-over'; };
+  const far1 = K.canvas(2600, H), f1 = far1.getContext('2d'); C.skyline(f1, 0, 2600, 800, { seed: 21, minH: 380, maxH: 760, color: '#3a1a5c', winP: 0.07, win: ['#ffc070', '#ff6aa8', '#7fe9ff'], cell: [3, 4] }); haze(f1, '#a03a98', 250, 800, 0.6);
+  const far2 = K.canvas(2700, H), f2 = far2.getContext('2d'); C.skyline(f2, 0, 2700, 820, { seed: 33, minH: 330, maxH: 640, color: '#22103e', winP: 0.1, minW: 90, maxW: 220, cell: [4, 6] }); haze(f2, '#8a2f8a', 380, 820, 0.5);
+  const far3 = K.canvas(2900, H), f3 = far3.getContext('2d'), e3 = K.canvas(2900, H), e3x = e3.getContext('2d');
+  { const r = K.rng(77); for (const [x, w, top] of [[1380, 330, 250], [1760, 250, 120], [2060, 380, 300], [2480, 300, 200], [300, 380, 180], [780, 260, 90]]) { f3.fillStyle = '#150b2a'; f3.fillRect(x, top, w, 900); f3.fillStyle = '#1d1136'; f3.fillRect(x - 8, top - 10, w + 16, 12);
+      for (let yy = top + 34; yy < 700; yy += 96) for (let xx = x + 26; xx < x + w - 60; xx += 86) { const lit = r.chance(0.22) && (xx < 1350 || xx > 2150) ? r.pick(['#ffab40', '#19e6ff', '#ffab40']) : null; f3.fillStyle = '#0c0719'; f3.fillRect(xx, yy, 46, 58);
+        if (lit) { const gr = e3x.createLinearGradient(0, yy, 0, yy + 58); gr.addColorStop(0, K.rgba(lit, 0.85)); gr.addColorStop(1, K.rgba(lit, 0.35)); e3x.fillStyle = gr; e3x.fillRect(xx, yy, 46, 58); e3x.fillStyle = 'rgba(0,0,0,0.8)'; if (lit === '#19e6ff') for (let k = 0; k < 58; k += 9) e3x.fillRect(xx, yy + k, 46, 5); else e3x.fillRect(xx + 21, yy, 4, 58); } } }
+    haze(f3, '#5a2478', 300, 800, 0.4); f3.drawImage(e3, 0, 0); }
+  // primeiro plano: hidrante, grade e cabos, bem escuros
+  const fgC = K.canvas(3400, H), fg = fgC.getContext('2d'); fg.fillStyle = '#05030c';
+  C.cables(fg, [[0, 120, 1500, 40, 60], [900, -20, 3400, 150, 80], [0, 210, 3400, 60, 40]], '#05030c', 5);
+  
+  const signs = signsDef.map((s) => { const [c, x] = wide(); s.paint(x, true); return { canvas: c, x: X0, y: 0, level: (t) => NN.flicker(t, s.seed, s.amount) }; });
+  const rain = C.rain({ n: 560 });
+  const rimsL = (a = 1) => [{ color: P.magenta, dir: [-1, -0.25], w: 5, a: 0.95 * a, soft: 1.2 }, { color: P.magenta, dir: [-1, -0.2], w: 26, a: 0.3 * a, soft: 12 }];
+  scene = {
+    groundY: GY, ambient: '#2c2256', bloom: [0.55, 0.42],
+    camera: (t) => ({ x: K.tween(t, 0, 8, 0, 120, K.ease.inOut), y: 64, zoom: K.tween(t, 0, 8, 1.0, 1.04, K.ease.inOut) }), reflect: 1.25,
+    sky: (c) => c.drawImage(skyC, 0, 0),
+    far: [{ canvas: far1, parallax: 0.1, x: -40 }, { canvas: far2, parallax: 0.24, x: -60 }, { canvas: far3, parallax: 0.5, x: -150, dynamic: (c, t) => { c.fillStyle = P.red; c.globalAlpha = (t % 1.6) < 0.8 ? 1 : 0.12; c.shadowColor = P.red; c.shadowBlur = 16; c.beginPath(); c.arc(1730, 106, 4, 0, 7); c.arc(630, 76, 4, 0, 7); c.fill(); c.shadowBlur = 0; c.globalAlpha = 1; } }],
+    albedo: { canvas: b.albC, x: X0 }, emis: { canvas: b.emC, x: X0 }, wet: { canvas: b.wetC, x: X0 }, signs,
+    lights: (t) => { const fj = NN.flicker(t, 3, 0.5), fl = NN.flicker(t, 11, 0.25), fa = NN.flicker(t, 5, 0.9); return [
+      { x: 688, y: 310, r: 620, color: P.magenta, i: 0.95 * fj }, { x: 688, y: 310, r: 300, color: P.cyan, i: 0.25 },
+      { x: 250, y: 350, r: 330, color: P.amber, i: 0.75 * fa }, { x: 215, y: 640, r: 300, color: P.amber, i: 0.5 }, { x: 485, y: 575, r: 240, color: P.amber, i: 0.4 },
+      { x: 1392, y: 320, r: 620, color: P.cyan, i: 0.9 * fl }, { x: 1450, y: 640, r: 560, color: P.amber, i: 0.8 }, { x: 1450, y: 860, r: 520, color: P.amber, i: 0.55, sy: 0.4 },
+      { x: 1700, y: 330, r: 260, color: P.magenta, i: 0.5 * NN.flicker(t, 12, 2.2) }, { x: 2106, y: 556, r: 300, color: P.magenta, i: 0.6 },
+      { x: b.lamp.lx, y: b.lamp.ly + 20, r: 420, color: P.amber, i: 0.5 }, { x: b.lamp.lx, y: 880, r: 420, color: P.amber, i: 0.7, sy: 0.35 },
+      { x: 700, y: 880, r: 520, color: P.magenta, i: 0.45 * fj, sy: 0.4 }, { x: 1885, y: 660, r: 260, color: P.amber, i: 0.5 },
+    ]; },
+    figures: (t) => [
+      F.gato({ x: 990, y: 684, scale: 0.42, rims: [{ color: P.amber, dir: [0.2, -1], w: 3, a: 0.8, soft: 1 }] }),
+      F.saxofonista({ x: 500, y: 838, scale: 0.9, rims: [{ color: P.magenta, dir: [1, -0.35], w: 4, a: 0.95, soft: 1 }, { color: P.amber, dir: [-1, 0.1], w: 3, a: 0.6, soft: 1 }],
+        wrap: [{ color: P.magenta, dir: [1, -0.3], w: 16, a: 0.3, soft: 9, add: true }],
+        saxRim: [{ color: '#ffd27a', dir: [0.6, -1], w: 4, a: 1, soft: 0.8 }, { color: P.magenta, dir: [1, 0.2], w: 3, a: 0.9, soft: 0.8 }] }),
+      F.leitor({ x: 1470, y: 840, scale: 0.9, flip: true, look: K.tween(t, 4.6, 5.4, 0, 1),
+        rims: [{ color: P.cyan, dir: [-0.5, -1], w: 4, a: 0.85, soft: 1 }, { color: P.amber, dir: [1, 0.15], w: 4, a: 0.8, soft: 1 }],
+        wrap: [{ color: P.amber, dir: [1, 0.1], w: 14, a: 0.22, soft: 8, add: true }] }),
+      Object.assign(F.passante({ x: K.lerp(2150, -450, t / 5.6), y: 1290, scale: 1.75, flip: true, speed: 1.9, rims: [{ color: P.magenta, dir: [-1, -0.5], w: 6, a: 0.45, soft: 3 }, { color: P.cyan, dir: [1, -0.6], w: 5, a: 0.35, soft: 3 }] }), { parallax: 1.45, blur: 5, noReflect: true, noShadow: true }),
+    ],
+    volumetrics: (c, t, pass) => {
+      if (pass === 'back') { C.cone(c, b.lamp.lx, b.lamp.ly, { len: 660, spread: 250, a: 0.4 }); C.steam(c, t, 990, 800, { color: '#7a5aa8', n: 14, rise: 520, spread: 200, a: 0.1, seed: 2 }); }
+      else { C.steam(c, t, 760, 986, { color: '#b05a9a', n: 18, rise: 360, spread: 150, a: 0.12, seed: 6 }); }
+    },
+    rain, rainColor: '#4a4580',
+    fg: [{ canvas: fgC, parallax: 1.7, x: -200, blur: 4 }],
+    overlay: (c, t) => {
+      NN.hud(c, t, { tc0: 187 });
+      NN.dialog(c, t, { x: 470, y: 900, w: 980, h: 144, speaker: 'NARRADOR', color: P.cyan, t0: 2.4, cps: 30,
+        segs: [{ text: 'Toda cidade guarda um ' }, { text: 'livro', color: P.cyan }, { text: ' que ' }, { text: 'ninguém', color: P.magenta, shake: true }, { text: ' terminou de ler.' }] });
+    },
+    fx: (t) => ({ glitch: Math.max(K.remap(t, 0, 0.35, 1, 0), K.remap(t, 7.72, 8, 0, 1)) }),
+  };
+  shot = new NN.Shot(view, scene);
+});
+K.run({ duration: 8, fps: 30, ready, render: (t) => shot.render(t) });
+</script></body></html>

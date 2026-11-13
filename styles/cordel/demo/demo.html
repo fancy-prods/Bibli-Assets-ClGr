@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>cordel: demo</title>
+<style>html,body{margin:0;background:#000} .paper-fill{}</style></head>
+<body><div id="stage"></div>
+<script src="../../../shared/web/kit.js"></script>
+<script src="../engine/cordel.js"></script>
+<script>
+/* Demo do estilo cordel: "O homem que leu o mundo", 8 s. A gravura é impressa peça por peça. */
+const K = Kit, X = Cordel, W = K.W, H = K.H, el = X.el;
+const root = document.getElementById('stage'); K.stage(root);
+let S, parts = [], sol, leitor, birds = [], legenda, titulo;
+const ready = K.fonts([
+  { family: 'Alfa Slab One', url: '../fonts/alfa-slab-one-latin-400-normal.woff2' },
+  { family: 'IM Fell English', url: '../fonts/im-fell-english-latin-400-normal.woff2' },
+  { family: 'IM Fell English', url: '../fonts/im-fell-english-latin-400-italic.woff2', style: 'italic' },
+]).then(() => {
+  S = X.stage(root, { paper: 'palha' }); const paper = S.paperColor, ink = S.ink, spot = S.spot;
+  const wrap = (n) => { const w = el('g'); n.parentNode.insertBefore(w, n); w.appendChild(n); return w; };
+  const add = (node, t0, cx, cy, spotNode) => { parts.push({ node: wrap(node), t0, cx, cy }); if (spotNode) parts.push({ node: wrap(spotNode), t0: t0 - 2 / 12, cx, cy }); return node; };
+  add(X.moldura(ink), 0.08, W / 2, H / 2);
+  add(X.chao(ink, 800, paper), 0.42, W / 2, 900);
+  // céu: nuvens e asteriscos
+  add(X.nuvem(ink, 1130, 330, 1.05), 1.92, 1130, 330);
+  add(X.asteriscos(ink, [[190, 420], [760, 250], [1250, 520], [1700, 560], [1160, 190], [1500, 640], [210, 620], [640, 520], [1790, 400]]), 2.08, W / 2, 400);
+  // casa ao longe + cor
+  const gs = el('g', {}, spot); add(X.casa(ink, gs, 1310, 800, 250, paper), 1.5, 1435, 730, gs);
+  // mandacaru
+  const gm = el('g', {}, spot); add(X.mandacaru(ink, gm, 1730, 830, 420, paper), 1.25, 1730, 620, gm);
+  [[1560, 846, 1], [1250, 838, 0.8], [240, 850, 1.1], [1020, 828, 0.9]].forEach(([x, y, s]) => add(X.tufo(ink, x, y, s), 0.5, x, y));
+  // árvore
+  const tree = el('g', {}, ink); X.tronco(tree, 500, 520, 838, 46, paper); X.copa(tree, 500, 340, 350, 180, paper, { seed: 6, leaf: 34 }); add(tree, 0.75, 500, 500);
+  // leitor
+  const gl = el('g', {}, spot); leitor = X.leitor(ink, gl, 820, 852, 0.92, paper); add(leitor.g, 1.0, 850, 640, gl);
+  // sol
+  const gsol = el('g', {}, spot); sol = X.sol(ink, gsol, 1560, 300, 104); add(sol.g, 1.75, 1560, 300, gsol);
+  // pássaros
+  for (let i = 0; i < 3; i++) { const b = X.passaro(ink, 0.9 - i * 0.14); birds.push(b); }
+  ink.querySelectorAll('.paper-fill').forEach((n) => n.setAttribute('fill', paper));
+  // título e legenda
+  titulo = X.faixa(ink, 'O HOMEM QUE LEU O MUNDO', W / 2, 150, { size: 78, paper }); add(titulo.g, 2.5, W / 2, 150);
+  legenda = X.legenda(S.type, 'toda tarde, debaixo do umbuzeiro, ele abria o livro'.split(' ').map((w, i) => ({ w, t: 3.5 + i * 0.25 })), W / 2, 992, { size: 62, fill: paper });
+});
+function render(t) {
+  S.boil(t); const ts = X.step(t);
+  for (const p of parts) X.stamp(p.node, t, p.t0, p.cx, p.cy);
+  sol.rays.setAttribute('transform', `rotate(${Math.floor(ts * 3) * 11.25})`);
+  const bl = (ts % 2.75) < 0.17; leitor.blink(bl);
+  sol.eyes.setAttribute('transform', `translate(${ts > 4.4 && ts < 6.6 ? -5 : 0},${ts > 4.4 && ts < 6.6 ? 5 : 0})`);
+  leitor.nod(ts > 5.0 && ts < 5.5 ? 5 : 0); leitor.turn(ts > 5.08 && ts < 5.34);
+  birds.forEach((b, i) => { const k = ts - 2.2 - i * 0.35, x = 980 + k * 80 + i * 60, y = 560 - k * 22 + i * 64 + Math.sin(k * 3 + i) * 10; b.g.setAttribute('transform', `translate(${x},${y}) rotate(-8)`); b.g.setAttribute('opacity', k < 0 ? 0 : k < 1 / 12 ? 0.45 : 1); b.pose(Math.floor(ts * 6) + i); });
+  legenda.update(t);
+}
+K.run({ duration: 8, fps: 30, ready, render });
+</script></body></html>

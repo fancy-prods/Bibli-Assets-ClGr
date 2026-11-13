@@ -1,0 +1,80 @@
+{
+  "style": "bebop",
+  "style_version": 0,
+  "status": "proposta",
+  "assets": [
+    {
+      "id": "bebop.prensa",
+      "name": "Prensa de três chapas (sobreimpressão, fora de registro, manchado, grão)",
+      "style": "bebop",
+      "type": "module",
+      "dimension": "2d",
+      "tags": ["impressao", "riso", "multiply", "retro", "textura", "paleta"],
+      "params": {
+        "prensagem": "cobalto | mostarda | carmim | menta | {paper, K, A, B}",
+        "chapas": "P.A, P.B, P.K (desenhar com alfa); P.on(lista, fn, knock)",
+        "end": "misreg 2.4 px, boil 12 poses/s"
+      },
+      "path": "styles/bebop/engine/bebop.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Proposta, aguardando aprovação. Canvas 2D; depende de shared/web/kit.js."
+    },
+    {
+      "id": "bebop.tempo",
+      "name": "Relógio de compasso com swing (snap, hit, pulse, eighth)",
+      "style": "bebop",
+      "type": "module",
+      "dimension": "2d",
+      "tags": ["ritmo", "bpm", "swing", "animacao", "jazz"],
+      "params": { "bpm": "default 120", "swing": "0.5 (reto) .. 0.66 (tercina)" },
+      "path": "styles/bebop/engine/bebop.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Bebop.Tempo. Proposta."
+    },
+    {
+      "id": "bebop.formas",
+      "name": "Recorte de tesoura, retícula e texto ajustado/revelado",
+      "style": "bebop",
+      "type": "component",
+      "dimension": "2d",
+      "tags": ["recorte", "halftone", "reticula", "tipografia", "titulo"],
+      "params": {
+        "cut": "pts, seed, jit 3.5",
+        "halftone": "bbox, clipFn, valueFn, pitch 13, angle 45°",
+        "fit/type/reveal": "font League Gothic | Playfair Display | Space Mono"
+      },
+      "path": "styles/bebop/engine/bebop.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Fontes OFL em styles/bebop/fonts/. Proposta."
+    },
+    {
+      "id": "bebop.leitor",
+      "name": "Leitor recortado, sentado de perfil (marca o tempo)",
+      "style": "bebop",
+      "type": "character",
+      "dimension": "2d",
+      "tags": ["personagem", "recorte", "leitor", "sentado"],
+      "params": { "ox, oy, s": "posição e escala", "hat": "chapa ou null", "book": "chapa ou null", "body": "chapa", "shade": "bool (retícula)", "tempo": "Bebop.Tempo para acenar/bater o pé" },
+      "path": "styles/bebop/engine/bebop.js",
+      "used_in": [],
+      "status": "active",
+      "notes": "Conceito 'personagem lendo' redesenhado como papel recortado. Proposta."
+    },
+    {
+      "id": "bebop.capa_como_ler",
+      "name": "Quadro demo: capa 'Como ler um livro' (bloco, disco, título, créditos, barras)",
+      "style": "bebop",
+      "type": "scene",
+      "dimension": "2d",
+      "tags": ["demo", "capa", "abertura", "titulo"],
+      "params": {},
+      "path": "styles/bebop/demo/demo.html",
+      "used_in": [],
+      "status": "active",
+      "notes": "Modelo de abertura; troca de prensagem nos tempos 12 e 14. Proposta."
+    }
+  ]
+}
